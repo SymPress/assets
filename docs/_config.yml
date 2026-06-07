@@ -1,0 +1,30 @@
+title: SymPress Assets
+description: >-
+  Composer-Library für WordPress-Scripts, Script Modules und Styles.
+baseurl: /assets # Your repo name with a leading slash.
+
+# Aux links for the upper right navigation
+aux_links:
+  "SymPress Assets on GitHub":
+    - https://github.com/sympress/assets
+
+# Footer "Edit this page on GitHub" link text
+gh_edit_repository: https://github.com/sympress/assets # Your repo GitHub URL
+
+# Everything above is repo specific.
+
+###############################################################
+
+# This section is repo specific. These can be omitted if defaults make sense.
+
+gh_edit_branch: master # The default branch of the repo. Default: main
+gh_edit_source: docs # The directory containing the docs. Default: docs
+
+###############################################################
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jemoji
+
+permalink: pretty
