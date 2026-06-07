@@ -2,9 +2,9 @@
 nav_order: 5
 ---
 
-# Output Filter
+# Output Filters
 
-Output Filter verändern das finale `script`- oder `link`-Tag.
+Output filters modify the final `script` or `link` tag.
 
 ```php
 <?php
@@ -15,20 +15,20 @@ $script = (new Script('site', plugin_dir_url(__FILE__) . 'assets/site.js'))
     ->withAttributes(['crossorigin' => 'anonymous']);
 ```
 
-## Mitgelieferte Filter
+## Included Filters
 
-- `AttributesOutputFilter` setzt zusätzliche Attribute.
-- `InlineAssetOutputFilter` gibt kleine, erlaubte CSS- oder JS-Dateien inline aus.
-- `AsyncStyleOutputFilter` lädt nicht-kritisches CSS per `preload`.
+- `AttributesOutputFilter` sets additional attributes.
+- `InlineAssetOutputFilter` emits small, allowed CSS or JS files inline.
+- `AsyncStyleOutputFilter` loads non-critical CSS through `preload`.
 
-`Style::preload()` setzt `AsyncStyleOutputFilter` automatisch und erzeugt einen
-`noscript`-Fallback. Bestehende Attribute wie `media`, `integrity`,
-`crossorigin` und `fetchpriority` bleiben erhalten.
+`Style::preload()` sets `AsyncStyleOutputFilter` automatically and creates a
+`noscript` fallback. Existing attributes such as `media`, `integrity`,
+`crossorigin`, and `fetchpriority` are preserved.
 
-Für Scripts sind `AsyncScriptOutputFilter` und `DeferScriptOutputFilter`
-deprecated. Nutze stattdessen `Script::async()` oder `Script::defer()`.
+For scripts, `AsyncScriptOutputFilter` and `DeferScriptOutputFilter` are
+deprecated. Use `Script::async()` or `Script::defer()` instead.
 
-## Eigener Filter
+## Custom Filter
 
 ```php
 <?php

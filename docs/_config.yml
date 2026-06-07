@@ -1,6 +1,6 @@
 title: SymPress Assets
 description: >-
-  Composer-Library für WordPress-Scripts, Script Modules und Styles.
+  Composer library for WordPress scripts, script modules, and styles.
 baseurl: /assets # Your repo name with a leading slash.
 
 # Aux links for the upper right navigation

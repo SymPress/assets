@@ -4,13 +4,13 @@ nav_order: 4
 
 # Assets
 
-Das Package liefert drei Asset-Klassen:
+The package provides three asset classes:
 
-- `Script` für klassische JavaScript-Dateien
-- `ScriptModule` für WordPress Script Modules
-- `Style` für CSS-Dateien
+- `Script` for classic JavaScript files
+- `ScriptModule` for WordPress script modules
+- `Style` for CSS files
 
-Alle Assets brauchen `handle`, `url` und optional eine `location`.
+All assets need a `handle`, a `url`, and optionally a `location`.
 
 ```php
 <?php
@@ -23,18 +23,18 @@ $script = new Script('site', plugin_dir_url(__FILE__) . 'assets/site.js', Asset:
 $style = new Style('site', plugin_dir_url(__FILE__) . 'assets/site.css', Asset::FRONTEND);
 ```
 
-## Gemeinsame Optionen
+## Shared Options
 
-| Option | Zweck |
+| Option | Purpose |
 | --- | --- |
-| `withDependencies()` | WordPress-Handles als Abhängigkeiten setzen |
-| `withVersion()` | feste Version setzen |
-| `withFilePath()` | Dateipfad für automatische Versionserkennung setzen |
-| `canEnqueue()` | Asset nur bedingt enqueuen |
-| `forLocation()` | Ausgabeort setzen |
-| `withAttributes()` | zusätzliche HTML-Attribute setzen |
-| `excludeFromCacheOptimization()` | Optimizer-Ausnahmen setzen |
-| `withResourceHint()` | Resource Hint ergänzen |
+| `withDependencies()` | Set WordPress handles as dependencies |
+| `withVersion()` | Set a fixed version |
+| `withFilePath()` | Set the file path for automatic version detection |
+| `canEnqueue()` | Enqueue an asset conditionally |
+| `forLocation()` | Set the output location |
+| `withAttributes()` | Set additional HTML attributes |
+| `excludeFromCacheOptimization()` | Set optimizer exclusions |
+| `withResourceHint()` | Add a resource hint |
 
 ```php
 $script
@@ -45,18 +45,18 @@ $script
 
 ## Locations
 
-Locations können kombiniert werden:
+Locations can be combined:
 
 ```php
 $style->forLocation(Asset::FRONTEND | Asset::BLOCK_EDITOR_ASSETS);
 ```
 
-Wichtige Konstanten sind `FRONTEND`, `BACKEND`, `LOGIN`, `BLOCK_ASSETS` und
+Important constants are `FRONTEND`, `BACKEND`, `LOGIN`, `BLOCK_ASSETS`, and
 `BLOCK_EDITOR_ASSETS`.
 
 ## Scripts
 
-Klassische Scripts nutzen standardmäßig WordPress' native `defer`-Strategie.
+Classic scripts use WordPress' native `defer` strategy by default.
 
 ```php
 $script
@@ -66,12 +66,12 @@ $script
     ->appendInlineScript('window.SiteReady = true;');
 ```
 
-Für unabhängige Scripts ist `async()` möglich. Für absichtlich blockierende
-Scripts gibt es `blocking()`.
+Use `async()` for independent scripts. Use `blocking()` for scripts that are
+intentionally render-blocking.
 
 ## Script Modules
 
-`ScriptModule` registriert ES-Module über die WordPress Script Modules API.
+`ScriptModule` registers ES modules through the WordPress script modules API.
 
 ```php
 use SymPress\Assets\ScriptModule;
@@ -82,8 +82,7 @@ $module = (new ScriptModule('@site/gallery', plugin_dir_url(__FILE__) . 'assets/
 
 ## Styles
 
-Styles bleiben standardmäßig blockierend. Nicht-kritisches CSS kann vorgeladen
-werden.
+Styles remain blocking by default. Non-critical CSS can be preloaded.
 
 ```php
 $style
@@ -95,9 +94,9 @@ $style
 
 ## Dependency Extraction
 
-Scripts und Script Modules lesen passende `.asset.json`-Dateien automatisch,
-wenn `withFilePath()` gesetzt ist. `.asset.php` ist aus Sicherheitsgründen nur
-aktiv, wenn PHP-Dependency-Dateien explizit erlaubt werden.
+Scripts and script modules automatically read matching `.asset.json` files when
+`withFilePath()` is set. For security reasons, `.asset.php` files are only
+enabled when PHP dependency files are explicitly allowed.
 
 ```php
 $script
@@ -107,9 +106,9 @@ $script
     ->withDependencyFileSizeLimit(65536);
 ```
 
-## Cache-Optimierung
+## Cache Optimization
 
-Ein Asset kann sich gegen aggressive Optimizer schützen:
+An asset can protect itself from aggressive optimizers:
 
 ```php
 use SymPress\Assets\CacheOptimization\CacheOptimizationExclusion;
@@ -118,12 +117,12 @@ $script->excludeFromCacheOptimization();
 $style->excludeFromCacheOptimization(CacheOptimizationExclusion::minifyAndCombine());
 ```
 
-`AssetManager::ignoreCache()` ist ein breiter Shortcut für registrierte Assets,
-deaktiviert aber nicht pauschal alle Defer-, Delay- oder Async-Optimierungen.
+`AssetManager::ignoreCache()` is a broad shortcut for registered assets, but it
+does not disable all defer, delay, or async optimizations globally.
 
-Unterstützt werden Filter für WP Rocket, SiteGround Speed Optimizer, W3 Total
-Cache, Autoptimize und LiteSpeed Cache. Zusätzlich werden defensive Attribute
-für weitere Optimizer gesetzt.
+Filters are supported for WP Rocket, SiteGround Speed Optimizer, W3 Total Cache,
+Autoptimize, and LiteSpeed Cache. Defensive attributes are also set for other
+optimizers.
 
 ## Resource Hints
 

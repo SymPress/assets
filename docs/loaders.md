@@ -4,7 +4,7 @@ nav_order: 3
 
 # Loaders
 
-Loader erzeugen mehrere Assets aus Build- oder PHP-Konfigurationen.
+Loaders create multiple assets from build or PHP configuration.
 
 ## Webpack Manifest
 
@@ -27,12 +27,12 @@ $loader = (new WebpackManifestLoader())
 $assets = $loader->load(__DIR__ . '/manifest.json');
 ```
 
-Dateien mit `.mjs` oder `.module.js` werden als `ScriptModule` geladen.
+Files ending in `.mjs` or `.module.js` are loaded as `ScriptModule`.
 
-## Manifest mit Konfiguration
+## Manifest with Configuration
 
-Manifest-Werte dürfen auch Objekte sein. `filePath` zeigt auf die gebaute Datei,
-alle weiteren Keys werden wie `AssetFactory`-Konfiguration behandelt.
+Manifest values may also be objects. `filePath` points to the built file, and
+all other keys are treated like `AssetFactory` configuration.
 
 ```json
 {
@@ -59,8 +59,8 @@ $assets = (new EncoreEntrypointsLoader())
     ->load(__DIR__ . '/entrypoints.json');
 ```
 
-Chunks aus einem Entrypoint werden in der richtigen Reihenfolge mit
-Abhängigkeiten registriert.
+Chunks from an entrypoint are registered in the correct order with
+dependencies.
 
 ## Array Loader
 
@@ -92,12 +92,11 @@ $assets = (new PhpFileLoader())
     ->load(__DIR__ . '/config/assets.php');
 ```
 
-PHP-Konfigurationen sollten nur aus vertrauenswürdigem Anwendungscode geladen
-werden.
+PHP configuration should only be loaded from trusted application code.
 
-## Versionen
+## Versions
 
-Alle Loader können die automatische Versionserkennung deaktivieren:
+All loaders can disable automatic version detection:
 
 ```php
 $loader->disableAutodiscoverVersion();

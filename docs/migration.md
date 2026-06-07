@@ -4,15 +4,15 @@ nav_order: 7
 
 # Migration
 
-## Von `inpsyde/assets`
+## From `inpsyde/assets`
 
-Für bestehenden Code sind meist nur wenige Änderungen nötig:
+Existing code usually only needs a few changes:
 
-- Composer-Package auf `sympress/assets` ändern.
-- Namespace von `Inpsyde\Assets` auf `SymPress\Assets` ändern.
-- Standalone-Bootstrap über `inc/bootstrap.php` explizit laden.
-- Falls Konfigurationen genutzt werden: `type` enthält die Asset-Klasse,
-  `location` enthält den WordPress-Ausgabeort.
+- Change the Composer package to `sympress/assets`.
+- Change the namespace from `Inpsyde\Assets` to `SymPress\Assets`.
+- Explicitly load the standalone bootstrap through `inc/bootstrap.php`.
+- If configuration arrays are used, `type` contains the asset class and
+  `location` contains the WordPress output location.
 
 ```php
 <?php
@@ -29,7 +29,7 @@ $style = AssetFactory::create([
 ]);
 ```
 
-## Interne Änderungen
+## Internal Changes
 
-Diese Variante ergänzt Symfony-Kernel-Integration, sichereres Symlink-Publishing,
-Cache-Optimizer-Exclusions, Resource Hints und modernere Script-/Style-Defaults.
+This variant adds Symfony kernel integration, safer symlink publishing, cache
+optimizer exclusions, resource hints, and more modern script and style defaults.

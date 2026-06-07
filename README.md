@@ -1,10 +1,10 @@
 # SymPress Assets
 
-Asset-Management für WordPress-Packages, Plugins und Themes von SymPress.
+Asset management for SymPress WordPress packages, plugins, and themes.
 
-Das Package registriert klassische Scripts, Script Modules und Styles über eine
-Composer-Library. Es läuft standalone in WordPress oder über die optionale
-Symfony-Kernel-Integration.
+The package registers classic scripts, script modules, and styles through a
+Composer library. It can run standalone in WordPress or through the optional
+Symfony kernel integration.
 
 ## Installation
 
@@ -14,16 +14,16 @@ composer require sympress/assets
 
 ## Features
 
-- Scripts, Script Modules und Styles mit gemeinsamer Asset-API
-- Webpack-Manifest-, Encore-, Array- und PHP-File-Loader
-- automatische Versionen über Dateipfade oder Dependency-Extraction-Dateien
-- native Script-Loading-Strategien: `defer`, `async`, `blocking`
-- Style-Preload für nicht-kritisches CSS
-- Resource Hints für `preload`, `preconnect` und `dns-prefetch`
-- Schutz vor Cache-, Minify-, Combine-, Defer- und Delay-Optimierungen
-- optionale Symfony-Kernel-Integration mit Asset-Providern
+- Scripts, script modules, and styles with one shared asset API
+- Webpack manifest, Encore, array, and PHP file loaders
+- Automatic versions from file paths or dependency extraction files
+- Native script loading strategies: `defer`, `async`, `blocking`
+- Style preload for non-critical CSS
+- Resource hints for `preload`, `preconnect`, and `dns-prefetch`
+- Protection from cache, minify, combine, defer, and delay optimizations
+- Optional Symfony kernel integration with asset providers
 
-## Beispiel
+## Example
 
 ```php
 <?php
@@ -43,18 +43,17 @@ add_action(
 );
 ```
 
-Klassische Scripts nutzen standardmäßig WordPress' native `defer`-Strategie.
-Styles bleiben blockierend, außer `Style::preload()` wird für nicht-kritisches
-CSS gesetzt.
+Classic scripts use WordPress' native `defer` strategy by default. Styles remain
+blocking unless `Style::preload()` is enabled for non-critical CSS.
 
 ## Standalone WordPress
 
-Wenn der Symfony-Kernel nicht genutzt wird, lade `inc/bootstrap.php` einmal nach
-dem Composer-Autoloader.
+When the Symfony kernel is not used, load `inc/bootstrap.php` once after the
+Composer autoloader.
 
-## Lizenz
+## License
 
-Dieses Package steht unter `GPL-2.0-or-later`.
+This package is licensed under `GPL-2.0-or-later`.
 
-Es enthält Code, der von `inpsyde/assets` abgeleitet ist. Details stehen in
-[NOTICE.md](./NOTICE.md).
+It contains code derived from `inpsyde/assets`. See [NOTICE.md](./NOTICE.md) for
+details.

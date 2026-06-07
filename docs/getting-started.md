@@ -4,8 +4,8 @@ nav_order: 1
 
 # Getting Started
 
-Assets werden während `AssetManager::ACTION_SETUP` registriert. So werden
-WordPress' Script- und Style-Registries erst genutzt, wenn sie bereit sind.
+Assets are registered during `AssetManager::ACTION_SETUP`. This ensures
+WordPress' script and style registries are only used once they are ready.
 
 ```php
 <?php
@@ -29,8 +29,8 @@ add_action(
 
 ## Standalone Bootstrap
 
-Ohne Symfony-Kernel wird der Bootstrap einmal nach dem Composer-Autoloader
-geladen:
+Without the Symfony kernel, load the bootstrap once after the Composer
+autoloader:
 
 ```php
 <?php
@@ -39,10 +39,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/vendor/sympress/assets/inc/bootstrap.php';
 ```
 
-## Assets Erweitern
+## Extending Assets
 
-Geladene Assets können vor der Registrierung ergänzt werden. Das ist praktisch,
-wenn Handles aus einem Manifest kommen.
+Loaded assets can be extended before registration. This is useful when handles
+come from a manifest.
 
 ```php
 <?php
@@ -70,15 +70,15 @@ add_action(
 );
 ```
 
-`handle`, `type` und `url` gehören zur Identität des Assets und werden über
-`extendAsset()` nicht geändert.
+`handle`, `type`, and `url` are part of the asset identity and are not changed
+through `extendAsset()`.
 
 ## Kernel Integration
 
-Mit `sympress/kernel` wird `AssetsBundle` automatisch als Bundle genutzt.
-Services, die `AssetProviderInterface` implementieren, liefern Assets. Services,
-die `AssetConfiguratorInterface` implementieren, können diese Assets vor der
-Registrierung anpassen.
+With `sympress/kernel`, `AssetsBundle` is used as a bundle automatically.
+Services that implement `AssetProviderInterface` provide assets. Services that
+implement `AssetConfiguratorInterface` can adjust those assets before
+registration.
 
 ```php
 <?php

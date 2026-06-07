@@ -4,11 +4,11 @@ nav_order: 6
 
 # Helpers
 
-Das Package lädt nur kleine Helper-Funktionen automatisch.
+The package only loads small helper functions automatically.
 
 ## Asset Suffix
 
-`withAssetSuffix()` ergänzt `.min`, wenn `SCRIPT_DEBUG` nicht aktiv ist.
+`withAssetSuffix()` appends `.min` when `SCRIPT_DEBUG` is not enabled.
 
 ```php
 <?php
@@ -18,11 +18,11 @@ use function SymPress\Assets\withAssetSuffix;
 $file = withAssetSuffix('site.js'); // site.min.js
 ```
 
-Ohne Dateiendung bleibt der Wert unverändert.
+Values without a file extension are returned unchanged.
 
 ## Symlinked Asset Folder
 
-`symlinkedAssetFolder()` veröffentlicht erlaubte Asset-Ordner unter
+`symlinkedAssetFolder()` publishes allowed asset folders under
 `wp-content/~sympress-assets/`.
 
 ```php
@@ -37,8 +37,8 @@ $url = symlinkedAssetFolder(
 );
 ```
 
-Übergib nur öffentliche Build-Assets, keine Package- oder Source-Verzeichnisse.
+Only pass public build assets, not package or source directories.
 
-Der Helper prüft erlaubte Basisverzeichnisse, Dateitypen und Symlink-Ziele. Für
-Composer-Packages außerhalb des Webroots sollte immer ein enger erlaubter
-Basisordner übergeben werden.
+The helper validates allowed base directories, file types, and symlink targets.
+For Composer packages outside the webroot, always pass a narrow allowed base
+directory.

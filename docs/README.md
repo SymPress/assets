@@ -6,18 +6,18 @@ permalink: /
 
 # SymPress Assets
 
-Kleine Composer-Library für WordPress-Assets: Scripts, Script Modules und
-Styles. Das Package kann direkt in WordPress laufen oder über die optionale
-Symfony-Kernel-Integration eingebunden werden.
+A small Composer library for WordPress assets: scripts, script modules, and
+styles. The package can run directly in WordPress or be wired through the
+optional Symfony kernel integration.
 
 ## Features
 
-- Asset-API für Scripts, Script Modules und Styles
-- Loader für Webpack Manifest, Encore Entry Points, Arrays und PHP-Dateien
-- Dependency Extraction für WordPress-Builds
-- Resource Hints und Style-Preload
-- Cache-Optimizer-Exclusions für gängige Performance-Plugins
-- Kernel-Integration mit Asset-Providern und Configurators
+- Asset API for scripts, script modules, and styles
+- Loaders for Webpack manifests, Encore entrypoints, arrays, and PHP files
+- Dependency extraction for WordPress builds
+- Resource hints and style preload
+- Cache optimizer exclusions for common performance plugins
+- Kernel integration with asset providers and configurators
 
 ## Installation
 
@@ -25,14 +25,14 @@ Symfony-Kernel-Integration eingebunden werden.
 composer require sympress/assets
 ```
 
-## Einstieg
+## Start Here
 
 - [Getting started](./getting-started.md)
 - [Assets](./assets.md)
 - [Loaders](./loaders.md)
 - [Helpers](./helpers.md)
 
-## Lizenz
+## License
 
-Das Package steht unter `GPL-2.0-or-later`. Herkunfts- und Änderungshinweise
-stehen in [`NOTICE.md`](../NOTICE.md).
+The package is licensed under `GPL-2.0-or-later`. Origin and change notes are
+available in [`NOTICE.md`](../NOTICE.md).

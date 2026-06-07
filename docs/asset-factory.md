@@ -4,8 +4,8 @@ nav_order: 2
 
 # Asset Factory
 
-`AssetFactory` erstellt einzelne Assets aus Array-Konfigurationen. Für
-Manifest-Dateien sind die Loader meist die bessere Wahl.
+`AssetFactory` creates individual assets from array configuration. For manifest
+files, loaders are usually the better choice.
 
 ```php
 <?php
@@ -32,22 +32,22 @@ $style = AssetFactory::create([
 ]);
 ```
 
-Pflichtfelder sind `type`, `handle` und `url`.
+Required fields are `type`, `handle`, and `url`.
 
-## Wichtige Config-Keys
+## Important Configuration Keys
 
-| Key | Asset | Zweck |
+| Key | Asset | Purpose |
 | --- | --- | --- |
-| `location` | alle | WordPress-Ausgabeort, z.B. `Asset::FRONTEND` |
-| `dependencies` | alle | Handle-Abhängigkeiten |
-| `filePath` | alle | Pfad für Version und Dependency Extraction |
-| `attributes` | Script, Style | zusätzliche Tag-Attribute |
-| `cacheOptimization` | alle | `true`, `false` oder `CacheOptimizationExclusion` |
-| `resourceHints` | alle | `preload`, `preconnect`, `dns-prefetch` |
-| `strategy` | Script | `defer`, `async` oder `blocking` |
-| `loadingMode` | Style | `blocking` oder `preload` |
-| `dependencyExtractionEnabled` | Script, ScriptModule | `.asset.json` lesen |
-| `phpDependencyFiles` | Script, ScriptModule | `.asset.php` erlauben |
+| `location` | all | WordPress output location, for example `Asset::FRONTEND` |
+| `dependencies` | all | Handle dependencies |
+| `filePath` | all | Path for versions and dependency extraction |
+| `attributes` | Script, Style | Additional tag attributes |
+| `cacheOptimization` | all | `true`, `false`, or `CacheOptimizationExclusion` |
+| `resourceHints` | all | `preload`, `preconnect`, `dns-prefetch` |
+| `strategy` | Script | `defer`, `async`, or `blocking` |
+| `loadingMode` | Style | `blocking` or `preload` |
+| `dependencyExtractionEnabled` | Script, ScriptModule | Read `.asset.json` |
+| `phpDependencyFiles` | Script, ScriptModule | Allow `.asset.php` |
 
 ```php
 $script = AssetFactory::create([
