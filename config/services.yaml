@@ -1,0 +1,80 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SymPress\Assets\:
+        resource: '../bundle/'
+        exclude:
+            - '../bundle/AssetsBundle.php'
+            - '../bundle/AssetConfiguratorInterface.php'
+            - '../bundle/AssetProviderInterface.php'
+
+    SymPress\Assets\AssetManager:
+        arguments:
+            $hookResolver: '@SymPress\Assets\Util\AssetHookResolver'
+            $extensionMerger: '@SymPress\Assets\AssetExtensionMerger'
+            $cacheOptimizationHandler: '@SymPress\Assets\CacheOptimization\CacheOptimizationHandler'
+            $resourceHintHandler: '@SymPress\Assets\Performance\ResourceHintHandler'
+        public: true
+
+    SymPress\Assets\AssetExtensionMerger: ~
+
+    SymPress\Assets\Bootstrap\AssetBootstrapper: ~
+
+    SymPress\Assets\Performance\ResourceHintHandler: ~
+
+    SymPress\Assets\CacheOptimization\CacheOptimizationContextFactory: ~
+
+    SymPress\Assets\CacheOptimization\CacheOptimizationHandler:
+        arguments:
+            $contextFactory: '@SymPress\Assets\CacheOptimization\CacheOptimizationContextFactory'
+            $adapters: !tagged_iterator
+                tag: 'assets.cache_optimizer_adapter'
+                default_priority_method: 'getDefaultPriority'
+
+    SymPress\Assets\CacheOptimization\Adapter\WpRocketAdapter:
+        tags:
+            - { name: assets.cache_optimizer_adapter }
+
+    SymPress\Assets\CacheOptimization\Adapter\SiteGroundOptimizerAdapter:
+        tags:
+            - { name: assets.cache_optimizer_adapter }
+
+    SymPress\Assets\CacheOptimization\Adapter\W3TotalCacheAdapter:
+        tags:
+            - { name: assets.cache_optimizer_adapter }
+
+    SymPress\Assets\CacheOptimization\Adapter\AutoptimizeAdapter:
+        tags:
+            - { name: assets.cache_optimizer_adapter }
+
+    SymPress\Assets\CacheOptimization\Adapter\LiteSpeedCacheAdapter:
+        tags:
+            - { name: assets.cache_optimizer_adapter }
+
+    SymPress\Assets\Util\AssetHookResolver: ~
+
+    assets.manager:
+        alias: SymPress\Assets\AssetManager
+        public: true
+
+    SymPress\Assets\Hook\AssetBootstrap:
+        tags:
+            - { name: kernel.hook, hook: 'wp_loaded', method: setup, priority: 98 }
+
+    SymPress\Assets\Hook\ConfiguredAssetRegistrar:
+        arguments:
+            $providers: !tagged_iterator
+                tag: 'assets.provider'
+                default_priority_method: 'getDefaultPriority'
+            $configurators: !tagged_iterator
+                tag: 'assets.configurator'
+                default_priority_method: 'getDefaultPriority'
+        tags:
+            -
+                name: kernel.hook
+                hook: !php/const 'SymPress\Assets\AssetManager::ACTION_SETUP'
+                method: register
+                priority: 0

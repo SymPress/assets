@@ -1,0 +1,112 @@
+{
+    "name": "sympress/assets",
+    "description": "WordPress asset management library with optional Symfony-kernel integration.",
+    "type": "library",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Brian Schäffner",
+            "email": "brian.schaeffner@sympress.de",
+            "role": "Developer"
+        },
+        {
+            "name": "Syde GmbH",
+            "homepage": "https://syde.com/",
+            "role": "Original author"
+        }
+    ],
+    "require": {
+        "php": "^8.5",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "symfony/filesystem": "^8.0",
+        "symfony/finder": "^8.0"
+    },
+    "require-dev": {
+        "sympress/kernel": "@dev",
+        "brain/monkey": "^2.6",
+        "friendsofphp/php-cs-fixer": "^3.94",
+        "johnpbloch/wordpress-core": ">=7.0",
+        "mikey179/vfsstream": "^1.6",
+        "mockery/mockery": "^1.6",
+        "php-stubs/wordpress-stubs": ">=7.0@stable",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-mockery": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpunit/phpunit": "^10.5",
+        "squizlabs/php_codesniffer": "^3.13",
+        "szepeviktor/phpstan-wordpress": "^2.0",
+        "symfony/var-dumper": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "SymPress\\Assets\\": [
+                "src/",
+                "bundle/"
+            ]
+        },
+        "files": [
+            "inc/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SymPress\\Assets\\Tests\\": "tests/Kernel/",
+            "SymPress\\Assets\\Tests\\Unit\\": "tests/phpunit/Unit/"
+        }
+    },
+    "extra": {
+        "kernel": {
+            "bundle": "SymPress\\Assets\\AssetsBundle",
+            "entry": "assets"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --no-coverage",
+        "test:unit": "phpunit --no-coverage --testsuite Unit",
+        "test:coverage": "phpunit --coverage-html coverage-html",
+        "cs:analyze": "phpstan analyse -c phpstan.neon.dist --no-progress",
+        "cs:style": "php-cs-fixer fix --dry-run --diff --using-cache=no --config=.php-cs-fixer.dist.php",
+        "cs:style:fix": "php-cs-fixer fix --using-cache=no --config=.php-cs-fixer.dist.php",
+        "cs:audit": "phpcs --standard=phpcs.xml.dist",
+        "cs:audit:fix": "phpcbf --standard=phpcs.xml.dist",
+        "qa": [
+            "@cs:analyze",
+            "@cs:style",
+            "@cs:audit",
+            "@test:unit"
+        ],
+        "cs": [
+            "@cs:style",
+            "@cs:audit"
+        ],
+        "cs:fix": [
+            "@cs:style:fix",
+            "@cs:audit"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "suggest": {
+        "sympress/kernel": "Enables the optional Symfony-kernel bundle integration."
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

@@ -1,0 +1,9 @@
+parameters:
+    level: max
+    paths:
+        - bundle
+        - inc
+        - src
+    bootstrapFiles:
+        - tests/phpunit/Support/WordPressStubs.php
+    treatPhpDocTypesAsCertain: false

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<ruleset name="Assets Core Package">
+    <description>
+        PSR-12 audit for the assets core package.
+    </description>
+
+    <arg name="colors"/>
+    <arg value="sp"/>
+    <arg name="basepath" value="."/>
+    <arg name="warning-severity" value="0"/>
+
+    <config name="testVersion" value="8.5-"/>
+    <config name="text_domain" value="assets"/>
+
+    <file>bundle</file>
+    <file>inc</file>
+    <file>src</file>
+    <file>tests</file>
+
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>.phpunit.cache/*</exclude-pattern>
+    <exclude-pattern>tests/phpunit/Support/WP_*.php</exclude-pattern>
+
+    <rule ref="PSR12"/>
+    <rule ref="PSR12.Classes.AnonClassDeclaration.SpaceAfterKeyword">
+        <severity>0</severity>
+    </rule>
+</ruleset>
