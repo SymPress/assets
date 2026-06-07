@@ -1,0 +1,315 @@
+<?php
+
+declare(strict_types=1);
+
+namespace SymPress\Assets\Tests\Unit\Loader;
+
+use SymPress\Assets\Asset;
+use SymPress\Assets\Loader\WebpackManifestLoader;
+use SymPress\Assets\Script;
+use SymPress\Assets\ScriptModule;
+use SymPress\Assets\Style;
+use SymPress\Assets\Tests\Unit\AbstractTestCase;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
+
+class WebpackManifestLoaderTest extends AbstractTestCase
+{
+    /**
+     * @var vfsStreamDirectory
+     */
+    private $root;
+
+    public function setUp(): void
+    {
+        $this->root = vfsStream::setup('tmp');
+        parent::setUp();
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider provideManifest
+     */
+    public function testLoadFromManifest(
+        string $json,
+        string $expectedHandle,
+        string $expectedFileName,
+        string $expectedClass,
+    ): void {
+        $expectedDirUrl = 'http://localhost.com/assets/';
+        $expectedFileUrl = $expectedDirUrl . ltrim($expectedFileName, '/');
+
+        $loader = new WebpackManifestLoader();
+        $loader->withDirectoryUrl($expectedDirUrl);
+        $assets = $loader->load($this->mockManifestJson($json));
+
+        static::assertCount(1, $assets);
+
+        /** @var Asset $asset */
+        $asset = $assets[0];
+        static::assertSame($expectedHandle, $asset->handle());
+        static::assertSame($expectedFileUrl, $asset->url());
+        static::assertInstanceOf($expectedClass, $asset);
+    }
+
+    /**
+     * @test
+     */
+    public function testLoadFromManifestMultipleAssets(): void
+    {
+        $json = json_encode(
+            [
+                'script' => 'script.js',
+                'style' => 'style.css',
+                'module' => 'module.mjs',
+                'custom-module' => 'custom.module.js',
+                '@vendor/module' => 'vendor.module.js',
+            ],
+        );
+
+        $loader = new WebpackManifestLoader();
+        $assets = $loader->load($this->mockManifestJson($json));
+
+        static::assertCount(5, $assets);
+
+        static::assertInstanceOf(ScriptModule::class, $assets[4]);
+        static::assertInstanceOf(ScriptModule::class, $assets[3]);
+        static::assertInstanceOf(ScriptModule::class, $assets[2]);
+        static::assertInstanceOf(Script::class, $assets[0]);
+        static::assertInstanceOf(Style::class, $assets[1]);
+    }
+
+    public function testCustomManifestEntryConfiguration(): void
+    {
+        $json = json_encode(
+            [
+                'handle-name' => [
+                    'filePath' => 'handle-name-script.js',
+                    'location' => [
+                        'frontend',
+                        'backend',
+                    ],
+                    'enqueue' => false,
+                    'inFooter' => true,
+                    'version' => '1.0.0',
+                    'condition' => '',
+                    'attributes' => [
+                        'async' => false,
+                        'defer' => false,
+                    ],
+                ],
+            ],
+        );
+
+        $loader = new WebpackManifestLoader();
+        $assets = $loader->load($this->mockManifestJson($json));
+        $asset = $assets[0];
+
+        static::assertInstanceOf(Script::class, $asset);
+        static::assertSame('handle-name-script.js', $asset->url());
+        static::assertSame('vfs://tmp/handle-name-script.js', $asset->filePath());
+        static::assertSame('1.0.0', $asset->version());
+        static::assertFalse($asset->enqueue());
+        static::assertTrue($asset->inFooter());
+        static::assertFalse($asset->attributes()['async']);
+        static::assertFalse($asset->attributes()['defer']);
+        static::assertSame(Asset::BACKEND | Asset::FRONTEND, $asset->location());
+    }
+
+    /**
+     * @test
+     */
+    public function testLoadFromManifestNotSupportedTypes(): void
+    {
+        $json = json_encode(
+            [
+                'an image' => 'cat.jpeg',
+                'a font' => 'fancy-font.woff',
+            ],
+        );
+
+        $loader = new WebpackManifestLoader();
+        $assets = $loader->load($this->mockManifestJson($json));
+
+        static::assertCount(0, $assets);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider provideManifestWithAlternativeUrl
+     */
+    public function testLoadFromManifestWithAlternativeUrl(
+        string $json,
+        string $alternativeUrl,
+        string $expectedUrl,
+    ): void {
+        $loader = new WebpackManifestLoader();
+        $loader->withDirectoryUrl($alternativeUrl);
+        $assets = $loader->load($this->mockManifestJson($json));
+
+        /** @var Asset $asset */
+        $asset = $assets[0];
+        static::assertSame($expectedUrl, $asset->url());
+    }
+
+    public function testConfiguredManifestVersionDoesNotChangeLoaderAutodiscoverPolicy(): void
+    {
+        $json = json_encode(
+            [
+                'first' => [
+                    'filePath' => 'first.js',
+                    'version' => '1.0.0',
+                ],
+                'second' => [
+                    'filePath' => 'second.js',
+                ],
+            ],
+        );
+
+        $loader = (new WebpackManifestLoader())->disableAutodiscoverVersion();
+        $assets = $loader->load($this->mockManifestJson($json));
+
+        static::assertSame('1.0.0', $assets[0]->version());
+        static::assertNull($assets[1]->version());
+    }
+
+    public function testManifestConfigurationCanDisableDependencyExtraction(): void
+    {
+        vfsStream::newFile('script.asset.json')
+            ->withContent(json_encode(['dependencies' => ['sidecar'], 'version' => 'sidecar-version']))
+            ->at($this->root);
+        vfsStream::newFile('script.js')->at($this->root);
+
+        $json = json_encode(
+            [
+                'script' => [
+                    'dependencyExtractionEnabled' => false,
+                    'filePath' => 'script.js',
+                ],
+            ],
+        );
+
+        $assets = (new WebpackManifestLoader())->load($this->mockManifestJson($json));
+
+        static::assertSame([], $assets[0]->dependencies());
+    }
+
+    public static function provideManifestWithAlternativeUrl(): \Generator
+    {
+        $url = 'http://localhost.com/';
+
+        yield 'default' => [
+            '{"my-handle": "style.css"}',
+            $url,
+            $url . 'style.css',
+        ];
+
+        yield 'Asset in sub-folder absolute' => [
+            '{"my-handle": "/path/to/sub-folder/style.css"}',
+            $url,
+            $url . 'path/to/sub-folder/style.css',
+        ];
+
+        yield 'Asset in sub-folder to current' => [
+            '{"my-handle": "./path/to/sub-folder/style.css"}',
+            $url,
+            $url . 'path/to/sub-folder/style.css',
+        ];
+
+        yield 'Asset with URL' => [
+            '{"my-handle": "https://foo.bar/style.css"}',
+            $url,
+            $url . 'style.css',
+        ];
+
+        yield 'Asset with URL and sub-folder' => [
+            '{"my-handle": "https://foo.bar/baz/style.css"}',
+            $url,
+            $url . 'baz/style.css',
+        ];
+    }
+
+    public static function provideManifest(): \Generator
+    {
+        yield 'style asset' => [
+            '{"my-handle": "style.css"}',
+            'my-handle',
+            'style.css',
+            Style::class,
+        ];
+
+        yield 'script asset' => [
+            '{"my-handle": "script.js"}',
+            'my-handle',
+            'script.js',
+            Script::class,
+        ];
+
+        yield 'with file path in handle-key' => [
+            '{"./script.js": "script.js"}',
+            'script',
+            'script.js',
+            Script::class,
+        ];
+
+        yield 'absolute file path' => [
+            '{"my-handle": "/script.js"}',
+            'my-handle',
+            'script.js',
+            Script::class,
+        ];
+
+        yield 'current direction file path' => [
+            '{"my-handle": "./script.js"}',
+            'my-handle',
+            'script.js',
+            Script::class,
+        ];
+
+        yield 'asset in sub folder' => [
+            '{"my-handle": "./sub-folder/script.js"}',
+            'my-handle',
+            'sub-folder/script.js',
+            Script::class,
+        ];
+
+        yield 'with @vendor in handle for modules' => [
+            '{"@vendor/script.module.js": "script.module.js"}',
+            '@vendor/script.module',
+            'script.module.js',
+            ScriptModule::class,
+        ];
+
+        yield 'with @vendor in handle for modules and file path' => [
+            '{"@vendor/script.module.js": "/path/to/script.module.js"}',
+            '@vendor/script.module',
+            '/path/to/script.module.js',
+            ScriptModule::class,
+        ];
+
+        yield 'with complex @vendor in handle for modules and file path' => [
+            '{"path/to/@vendor/script.module.js": "/path/to/script.module.js"}',
+            '@vendor/script.module',
+            '/path/to/script.module.js',
+            ScriptModule::class,
+        ];
+
+        yield 'with asset configuration as array from the manifest' => [
+            '{"my-handle":{"filePath":"script.js","location":["frontend","backend"],"enqueue":false,'
+                . '"inFooter":true,"version":"1.0.0","condition":"","attributes":{"async":false,"defer":false}}}',
+            'my-handle',
+            'script.js',
+            Script::class,
+        ];
+    }
+
+    private function mockManifestJson(string $json): string
+    {
+        return vfsStream::newFile('manifest.json')
+            ->withContent($json)
+            ->at($this->root)
+            ->url();
+    }
+}
