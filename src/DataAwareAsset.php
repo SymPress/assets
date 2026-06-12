@@ -6,9 +6,7 @@ namespace SymPress\Assets;
 
 interface DataAwareAsset extends Asset
 {
-    /**
-     * @return array<mixed>
-     */
+    /** @return array<mixed> */
     public function data(): array;
 
     /**
