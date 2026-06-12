@@ -9,12 +9,10 @@ final readonly class StyleLoadingMode
     public const string BLOCKING = 'blocking';
     public const string PRELOAD = 'preload';
 
-    /**
-     * @return self::BLOCKING|self::PRELOAD
-     */
+    /** @return self::BLOCKING|self::PRELOAD */
     public static function normalize(string $mode): string
     {
-        if (self::BLOCKING === $mode || self::PRELOAD === $mode) {
+        if ($mode === self::BLOCKING || $mode === self::PRELOAD) {
             return $mode;
         }
 
