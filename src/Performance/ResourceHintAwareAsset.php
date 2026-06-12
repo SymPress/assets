@@ -6,9 +6,7 @@ namespace SymPress\Assets\Performance;
 
 interface ResourceHintAwareAsset
 {
-    /**
-     * @return list<ResourceHint>
-     */
+    /** @return list<ResourceHint> */
     public function resourceHints(): array;
 
     public function withResourceHint(ResourceHint $hint): static;

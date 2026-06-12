@@ -8,20 +8,16 @@ use SymPress\Assets\Asset;
 
 final class ResourceHintHandler
 {
-    /**
-     * @var list<ResourceHint>
-     */
+    /** @var list<ResourceHint> */
     private array $hints = [];
 
     private bool $registered = false;
 
-    /**
-     * @param array<class-string, array<string, Asset>> $assets
-     */
+    /** @param array<class-string, array<string, Asset>> $assets */
     public function run(array $assets): bool
     {
         $this->hints = $this->collectHints($assets);
-        if ([] === $this->hints) {
+        if ($this->hints === []) {
             return false;
         }
 
@@ -36,11 +32,6 @@ final class ResourceHintHandler
         return true;
     }
 
-    /**
-     * @param mixed $urls
-     *
-     * @return mixed
-     */
     public function resourceHints(mixed $urls, string $relationType): mixed
     {
         if (!is_array($urls)) {
@@ -49,9 +40,11 @@ final class ResourceHintHandler
 
         $knownUrls = [];
         foreach ($urls as $url) {
-            if (is_string($url)) {
-                $knownUrls[$url] = true;
+            if (!is_string($url)) {
+                continue;
             }
+
+            $knownUrls[$url] = true;
         }
 
         foreach ($this->hintsForRelation($relationType) as $hint) {
@@ -66,11 +59,6 @@ final class ResourceHintHandler
         return array_values($urls);
     }
 
-    /**
-     * @param mixed $resources
-     *
-     * @return mixed
-     */
     public function preloadResources(mixed $resources): mixed
     {
         if (!is_array($resources)) {
@@ -89,7 +77,6 @@ final class ResourceHintHandler
 
     /**
      * @param array<class-string, array<string, Asset>> $assets
-     *
      * @return list<ResourceHint>
      */
     private function collectHints(array $assets): array
@@ -111,9 +98,7 @@ final class ResourceHintHandler
         return array_values($hints);
     }
 
-    /**
-     * @return list<ResourceHint>
-     */
+    /** @return list<ResourceHint> */
     private function hintsForRelation(string $relation): array
     {
         return array_values(array_filter(
