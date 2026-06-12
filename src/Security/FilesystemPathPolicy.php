@@ -8,30 +8,26 @@ use SymPress\Assets\Util\FilesystemPath;
 
 final readonly class FilesystemPathPolicy
 {
-    /**
-     * @var list<string>
-     */
+    /** @var list<string> */
     private array $allowedBaseDirectories;
 
-    /**
-     * @param list<string> $allowedBaseDirectories
-     */
+    /** @param list<string> $allowedBaseDirectories */
     public function __construct(array $allowedBaseDirectories)
     {
         $this->allowedBaseDirectories = self::normalizeDirectories($allowedBaseDirectories);
     }
 
-    /**
-     * @param list<string> $additionalDirectories
-     */
+    /** @param list<string> $additionalDirectories */
     public static function fromWordPressAssetDirectories(array $additionalDirectories = []): self
     {
         $directories = $additionalDirectories;
 
         foreach (['WP_PLUGIN_DIR', 'WPMU_PLUGIN_DIR'] as $constant) {
-            if (defined($constant)) {
-                $directories[] = (string) constant($constant);
+            if (!defined($constant)) {
+                continue;
             }
+
+            $directories[] = (string) constant($constant);
         }
 
         foreach (['get_template_directory', 'get_stylesheet_directory'] as $function) {
@@ -45,9 +41,11 @@ final readonly class FilesystemPathPolicy
                 continue;
             }
 
-            if ('' !== $directory) {
-                $directories[] = $directory;
+            if ($directory === '') {
+                continue;
             }
+
+            $directories[] = $directory;
         }
 
         return new self($directories);
@@ -56,7 +54,7 @@ final readonly class FilesystemPathPolicy
     public function allowsPath(string $path): bool
     {
         $canonicalPath = self::canonicalPath($path);
-        if (null === $canonicalPath) {
+        if ($canonicalPath === null) {
             return false;
         }
 
@@ -68,9 +66,7 @@ final readonly class FilesystemPathPolicy
         return is_dir($path) && $this->allowsPath($path);
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public function allowedBaseDirectories(): array
     {
         return $this->allowedBaseDirectories;
@@ -89,7 +85,6 @@ final readonly class FilesystemPathPolicy
 
     /**
      * @param list<string> $directories
-     *
      * @return list<string>
      */
     private static function normalizeDirectories(array $directories): array
@@ -98,7 +93,7 @@ final readonly class FilesystemPathPolicy
 
         foreach ($directories as $directory) {
             $canonical = self::canonicalPath($directory);
-            if (null === $canonical || !is_dir($canonical)) {
+            if ($canonical === null || !is_dir($canonical)) {
                 continue;
             }
 

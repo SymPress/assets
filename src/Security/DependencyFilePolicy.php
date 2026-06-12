@@ -12,6 +12,7 @@ final readonly class DependencyFilePolicy
         private bool $phpFilesAllowed = false,
         private int $maxBytes = self::DEFAULT_MAX_BYTES,
     ) {
+
         if ($maxBytes < 1) {
             throw new \InvalidArgumentException('The dependency file size limit must be greater than zero.');
         }

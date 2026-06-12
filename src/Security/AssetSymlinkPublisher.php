@@ -42,9 +42,7 @@ final readonly class AssetSymlinkPublisher
     ) {
     }
 
-    /**
-     * @param list<string> $additionalAllowedOriginDirectories
-     */
+    /** @param list<string> $additionalAllowedOriginDirectories */
     public static function forWordPress(array $additionalAllowedOriginDirectories = []): self
     {
         return new self(
@@ -59,7 +57,7 @@ final readonly class AssetSymlinkPublisher
         }
 
         $originDir = FilesystemPath::canonical($originDir);
-        if (null === $originDir || !is_dir($originDir)) {
+        if ($originDir === null || !is_dir($originDir)) {
             return null;
         }
 
@@ -72,13 +70,13 @@ final readonly class AssetSymlinkPublisher
         }
 
         $name = $this->normalizeName($name);
-        if (null === $name) {
+        if ($name === null) {
             return null;
         }
 
         $rootPath = $this->rootPath();
         $rootUrl = $this->rootUrl();
-        if (null === $rootPath || null === $rootUrl) {
+        if ($rootPath === null || $rootUrl === null) {
             return null;
         }
 
@@ -87,7 +85,7 @@ final readonly class AssetSymlinkPublisher
         }
 
         $rootPath = FilesystemPath::canonical($rootPath);
-        if (null === $rootPath) {
+        if ($rootPath === null) {
             return null;
         }
 
@@ -123,7 +121,7 @@ final readonly class AssetSymlinkPublisher
 
     private function rootPath(): ?string
     {
-        if (null !== $this->rootPath) {
+        if ($this->rootPath !== null) {
             return $this->rootPath;
         }
 
@@ -134,7 +132,7 @@ final readonly class AssetSymlinkPublisher
 
     private function rootUrl(): ?string
     {
-        if (null !== $this->rootUrl) {
+        if ($this->rootUrl !== null) {
             return $this->rootUrl;
         }
 
@@ -148,7 +146,7 @@ final readonly class AssetSymlinkPublisher
     private function normalizeName(string $name): ?string
     {
         $name = trim($name, "/\\ \t\n\r\0\x0B");
-        if ('' === $name || !preg_match('/^[A-Za-z0-9._-]+$/', $name)) {
+        if ($name === '' || !preg_match('/^[A-Za-z0-9._-]+$/', $name)) {
             return null;
         }
 
@@ -197,7 +195,7 @@ final readonly class AssetSymlinkPublisher
     private function resolveSymlinkTarget(string $link): ?string
     {
         $target = $this->filesystem->readlink($link);
-        if (null === $target || '' === $target) {
+        if ($target === null || $target === '') {
             return null;
         }
 

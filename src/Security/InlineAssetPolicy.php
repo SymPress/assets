@@ -15,22 +15,19 @@ final readonly class InlineAssetPolicy
 
     private const array DEFAULT_ALLOWED_EXTENSIONS_BY_ASSET_TYPE = [
         Script::class => ['js', 'mjs'],
-        Style::class => ['css'],
+        Style::class  => ['css'],
     ];
 
-    /**
-     * @var array<class-string<Asset>, list<string>>
-     */
+    /** @var array<class-string<Asset>, list<string>> */
     private array $allowedExtensionsByAssetType;
 
-    /**
-     * @param array<class-string<Asset>, list<string>>|null $allowedExtensionsByAssetType
-     */
+    /** @param array<class-string<Asset>, list<string>>|null $allowedExtensionsByAssetType */
     public function __construct(
         private FilesystemPathPolicy $pathPolicy,
         private int $maxBytes = self::DEFAULT_MAX_BYTES,
         ?array $allowedExtensionsByAssetType = null,
     ) {
+
         if ($maxBytes < 1) {
             throw new \InvalidArgumentException('The inline asset size limit must be greater than zero.');
         }
@@ -38,9 +35,7 @@ final readonly class InlineAssetPolicy
         $this->allowedExtensionsByAssetType = $allowedExtensionsByAssetType ?? self::DEFAULT_ALLOWED_EXTENSIONS_BY_ASSET_TYPE;
     }
 
-    /**
-     * @param list<string> $additionalAllowedDirectories
-     */
+    /** @param list<string> $additionalAllowedDirectories */
     public static function fromWordPressEnvironment(array $additionalAllowedDirectories = []): self
     {
         return new self(

@@ -21,7 +21,7 @@ final readonly class InlineStyleContent
     {
         $selector = trim($selector);
 
-        if ('' === $selector || 1 === preg_match(self::SELECTOR_CONTROL_PATTERN, $selector)) {
+        if ($selector === '' || preg_match(self::SELECTOR_CONTROL_PATTERN, $selector) === 1) {
             throw new \InvalidArgumentException(sprintf('Invalid CSS selector "%s".', $selector));
         }
 
@@ -34,7 +34,7 @@ final readonly class InlineStyleContent
             ? $name
             : "--{$name}";
 
-        if (1 !== preg_match(self::CUSTOM_PROPERTY_PATTERN, $name)) {
+        if (preg_match(self::CUSTOM_PROPERTY_PATTERN, $name) !== 1) {
             throw new \InvalidArgumentException(sprintf('Invalid CSS custom property name "%s".', $name));
         }
 
