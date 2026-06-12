@@ -10,9 +10,7 @@ use SymPress\Assets\OutputFilter\InlineAssetOutputFilter;
 
 trait FilterAwareTrait
 {
-    /**
-     * @var callable[]|AssetOutputFilter[]|class-string<AssetOutputFilter>[]
-     */
+    /** @var array<callable>|array<AssetOutputFilter>|array<class-string<AssetOutputFilter>> */
     protected array $filters = [];
 
     /**
@@ -22,17 +20,13 @@ trait FilterAwareTrait
      */
     protected array $attributes = [];
 
-    /**
-     * @return callable[]|AssetOutputFilter[]|class-string<AssetOutputFilter>[]
-     */
+    /** @return array<callable>|array<AssetOutputFilter>|array<class-string<AssetOutputFilter>> */
     public function filters(): array
     {
         return $this->filters;
     }
 
-    /**
-     * @param callable|class-string<AssetOutputFilter> ...$filters
-     */
+    /** @param callable|class-string<AssetOutputFilter> ...$filters */
     public function withFilters(...$filters): static
     {
         foreach ($filters as $filter) {
@@ -56,9 +50,7 @@ trait FilterAwareTrait
         return $this;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function attributes(): array
     {
         return $this->attributes;
