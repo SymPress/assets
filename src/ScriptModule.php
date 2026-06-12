@@ -10,9 +10,7 @@ class ScriptModule extends BaseAsset implements Asset, DependencyExtractionAware
 {
     use DependencyExtractionTrait;
 
-    /**
-     * @var array<string, mixed>
-     */
+    /** @var array<string, mixed> */
     protected array $data = [];
 
     public function __construct(
@@ -21,6 +19,7 @@ class ScriptModule extends BaseAsset implements Asset, DependencyExtractionAware
         int $location = Asset::FRONTEND | Asset::ACTIVATE,
         bool $dependencyExtractionEnabled = true,
     ) {
+
         parent::__construct($handle, $url, $location);
         $this->dependencyExtractionEnabled = $dependencyExtractionEnabled;
     }
@@ -34,17 +33,13 @@ class ScriptModule extends BaseAsset implements Asset, DependencyExtractionAware
         return $this;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function data(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param array<string, mixed> $data
-     */
+    /** @param array<string, mixed> $data */
     public function withData(array $data): static
     {
         $this->data = array_merge($this->data, $data);
@@ -52,17 +47,11 @@ class ScriptModule extends BaseAsset implements Asset, DependencyExtractionAware
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function defaultHandler(): string
     {
         return ScriptModuleHandler::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function version(): ?string
     {
         if ($this->dependencyExtractionEnabled) {
