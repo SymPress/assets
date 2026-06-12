@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace SymPress\Assets\Tests;
 
+use PHPUnit\Framework\TestCase;
 use SymPress\Assets\AssetManager;
 use SymPress\Assets\AssetsBundle;
 use SymPress\Assets\Tests\Fixtures\CacheOptimizerAdapterFixture;
 use SymPress\Assets\Tests\Fixtures\ConfiguratorFixture;
 use SymPress\Assets\Tests\Fixtures\ProviderFixture;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;

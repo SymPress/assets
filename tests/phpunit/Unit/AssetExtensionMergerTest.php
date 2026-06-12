@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace SymPress\Assets\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use SymPress\Assets\Asset;
 use SymPress\Assets\AssetExtensionMerger;
-use PHPUnit\Framework\Attributes\Test;
 
 final class AssetExtensionMergerTest extends AbstractTestCase
 {
@@ -15,22 +15,22 @@ final class AssetExtensionMergerTest extends AbstractTestCase
     {
         $merged = (new AssetExtensionMerger())->merge(
             [
-                'enqueue' => true,
+                'enqueue'  => true,
                 'location' => Asset::FRONTEND,
-                'version' => '1',
+                'version'  => '1',
             ],
             [
-                'enqueue' => false,
+                'enqueue'  => false,
                 'location' => Asset::BACKEND,
-                'version' => '2',
+                'version'  => '2',
             ],
         );
 
         self::assertSame(
             [
-                'enqueue' => false,
+                'enqueue'  => false,
                 'location' => Asset::BACKEND,
-                'version' => '2',
+                'version'  => '2',
             ],
             $merged,
         );
@@ -42,16 +42,16 @@ final class AssetExtensionMergerTest extends AbstractTestCase
         $merged = (new AssetExtensionMerger())->merge(
             [
                 'dependencies' => ['core'],
-                'inline' => [
+                'inline'       => [
                     'before' => ['window.beforeCore = true;'],
-                    'after' => ['window.afterCore = true;'],
+                    'after'  => ['window.afterCore = true;'],
                 ],
             ],
             [
                 'dependencies' => 'feature',
-                'inline' => [
+                'inline'       => [
                     'before' => ['window.beforeFeature = true;'],
-                    'after' => ['window.afterFeature = true;'],
+                    'after'  => ['window.afterFeature = true;'],
                 ],
             ],
         );
@@ -73,11 +73,11 @@ final class AssetExtensionMergerTest extends AbstractTestCase
         $merged = (new AssetExtensionMerger())->merge(
             [
                 'attributes' => ['defer' => true, 'type' => 'text/javascript'],
-                'localize' => ['config' => ['debug' => false]],
+                'localize'   => ['config' => ['debug' => false]],
             ],
             [
                 'attributes' => ['type' => 'module'],
-                'localize' => ['config' => ['debug' => true]],
+                'localize'   => ['config' => ['debug' => true]],
             ],
         );
 

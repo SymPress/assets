@@ -9,13 +9,11 @@ use SymPress\Assets\Asset;
 use SymPress\Assets\BaseAsset;
 use SymPress\Assets\Tests\Unit\AbstractTestCase;
 use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 
 class BaseAssetTest extends AbstractTestCase
 {
-    /**
-     * @var \org\bovigo\vfs\vfsStreamDirectory
-     */
-    private $root;
+    private vfsStreamDirectory $root;
 
     public function setUp(): void
     {
@@ -23,15 +21,13 @@ class BaseAssetTest extends AbstractTestCase
         parent::setUp();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testBasic(): void
     {
         $expectedHandle = bin2hex(random_bytes(4));
         $expectedUrl = "{$expectedHandle}.js";
 
-        $asset = new class($expectedHandle, $expectedUrl) extends BaseAsset {
+        $asset = new class ($expectedHandle, $expectedUrl) extends BaseAsset {
             protected function defaultHandler(): string
             {
                 return '';
@@ -44,12 +40,10 @@ class BaseAssetTest extends AbstractTestCase
         static::assertSame(Asset::FRONTEND | Asset::ACTIVATE, $asset->location());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testVersion(): void
     {
-        $asset = new class('', '') extends BaseAsset {
+        $asset = new class ('', '') extends BaseAsset {
             protected function defaultHandler(): string
             {
                 return '';
@@ -76,12 +70,10 @@ class BaseAssetTest extends AbstractTestCase
         static::assertEquals('foo', $asset->version());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testNoVersion(): void
     {
-        $asset = new class('', '') extends BaseAsset {
+        $asset = new class ('', '') extends BaseAsset {
             protected function defaultHandler(): string
             {
                 return '';
@@ -95,7 +87,7 @@ class BaseAssetTest extends AbstractTestCase
 
     public function testVersionReturnsNullWhenFilePathCannotBeResolved(): void
     {
-        $asset = new class('asset', 'https://example.com/missing.css') extends BaseAsset {
+        $asset = new class ('asset', 'https://example.com/missing.css') extends BaseAsset {
             protected function defaultHandler(): string
             {
                 return '';
@@ -107,9 +99,7 @@ class BaseAssetTest extends AbstractTestCase
         static::assertNull($asset->version());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testFilePath(): void
     {
         $root = sys_get_temp_dir() . '/sympress-base-asset-' . bin2hex(random_bytes(6));
@@ -135,9 +125,7 @@ class BaseAssetTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testFilePathFails(): void
     {
         $asset = $this->createBaseAsset();
@@ -148,9 +136,7 @@ class BaseAssetTest extends AbstractTestCase
         static::assertSame('', $asset->filePath());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testDependencies(): void
     {
         $asset = $this->createBaseAsset();
@@ -168,9 +154,7 @@ class BaseAssetTest extends AbstractTestCase
         static::assertEquals(['foo', 'bar', 'baz'], $asset->dependencies());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testLocation(): void
     {
         $asset = $this->createBaseAsset();
@@ -181,10 +165,8 @@ class BaseAssetTest extends AbstractTestCase
         static::assertSame(Asset::BACKEND, $asset->location());
     }
 
-    /**
-     * @test
-     */
-    public function testEnqueue()
+    /** @test */
+    public function testEnqueue(): void
     {
         $asset = $this->createBaseAsset();
 
@@ -197,13 +179,11 @@ class BaseAssetTest extends AbstractTestCase
         static::assertTrue($asset->enqueue());
     }
 
-    /**
-     * @test
-     */
-    public function testHandler()
+    /** @test */
+    public function testHandler(): void
     {
         $expectedHandler = 'myHandler';
-        $asset = new class($expectedHandler) extends BaseAsset {
+        $asset = new class ($expectedHandler) extends BaseAsset {
             protected $expectedHandler;
 
             public function __construct(string $expectedHandler)
@@ -227,10 +207,10 @@ class BaseAssetTest extends AbstractTestCase
 
     private function createBaseAsset(string $handle = '', string $src = ''): BaseAsset
     {
-        return new class($handle, $src) extends BaseAsset {
+        return new class ($handle, $src) extends BaseAsset {
             protected function defaultHandler(): string
             {
-                return __CLASS__;
+                return self::class;
             }
         };
     }

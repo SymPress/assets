@@ -9,13 +9,11 @@ use SymPress\Assets\Handler\ScriptModuleHandler;
 use SymPress\Assets\ScriptModule;
 use SymPress\Assets\Tests\Unit\AbstractTestCase;
 use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 
 class ScriptModuleTest extends AbstractTestCase
 {
-    /**
-     * @var \org\bovigo\vfs\vfsStreamDirectory
-     */
-    private $root;
+    private vfsStreamDirectory $root;
 
     public function setUp(): void
     {
@@ -23,9 +21,7 @@ class ScriptModuleTest extends AbstractTestCase
         parent::setUp();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testBasic(): void
     {
         $scriptModule = new ScriptModule('foo', 'foo.js');
@@ -34,9 +30,7 @@ class ScriptModuleTest extends AbstractTestCase
         static::assertSame(Asset::FRONTEND | Asset::ACTIVATE, $scriptModule->location());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testWithData(): void
     {
         $scriptModule = new ScriptModule('handle', 'script.js');
@@ -49,9 +43,7 @@ class ScriptModuleTest extends AbstractTestCase
         static::assertSame($expectedData, $scriptModule->data());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testDependencyExtractionCanBeDisabled(): void
     {
         $expectedDependencies = ['foo', 'bar', 'baz'];
@@ -62,7 +54,7 @@ class ScriptModuleTest extends AbstractTestCase
                 json_encode(
                     [
                         'dependencies' => $expectedDependencies,
-                        'version' => $expectedVersion,
+                        'version'      => $expectedVersion,
                     ],
                 ),
             )
@@ -81,9 +73,7 @@ class ScriptModuleTest extends AbstractTestCase
         static::assertNotEquals($expectedVersion, $testee->version());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testDependencyExtractionEnabledByDefault(): void
     {
         $expectedDependencies = ['foo', 'bar', 'baz'];

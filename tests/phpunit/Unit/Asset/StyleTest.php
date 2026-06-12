@@ -13,10 +13,8 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 class StyleTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
-    public function testBasic()
+    /** @test */
+    public function testBasic(): void
     {
         $testee = new Style('foo', 'foo.css');
 
@@ -27,10 +25,8 @@ class StyleTest extends AbstractTestCase
         static::assertSame(StyleHandler::class, $testee->handler());
     }
 
-    /**
-     * @test
-     */
-    public function testMedia()
+    /** @test */
+    public function testMedia(): void
     {
         $expected = 'bar';
 
@@ -42,10 +38,8 @@ class StyleTest extends AbstractTestCase
         static::assertSame($expected, $testee->media());
     }
 
-    /**
-     * @test
-     */
-    public function testInlineStyles()
+    /** @test */
+    public function testInlineStyles(): void
     {
         $expected = 'bar';
 
@@ -69,10 +63,8 @@ class StyleTest extends AbstractTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function testUseAsyncFilter()
+    /** @test */
+    public function testUseAsyncFilter(): void
     {
         $testee = new Style('handle', 'foo.css');
         static::assertEmpty($testee->filters());
@@ -94,10 +86,8 @@ class StyleTest extends AbstractTestCase
         static::assertSame([], $testee->filters());
     }
 
-    /**
-     * @dataProvider provideCssVars
-     */
-    public function testWithCssVars(string $element, array $cssVars, array $expected)
+    /** @dataProvider provideCssVars */
+    public function testWithCssVars(string $element, array $cssVars, array $expected): void
     {
         $testee = new Style('handle', 'foo.css');
         $testee->withCssVars($element, $cssVars);
@@ -126,10 +116,8 @@ class StyleTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @test
-     */
-    public function testCssVarsAsString()
+    /** @test */
+    public function testCssVarsAsString(): void
     {
         $element = ':root';
         $vars = ['white' => '#fff', 'black' => '#000'];
@@ -168,10 +156,8 @@ class StyleTest extends AbstractTestCase
         );
     }
 
-    /**
-     * @test
-     */
-    public function testMultipleCssVarsAsString()
+    /** @test */
+    public function testMultipleCssVarsAsString(): void
     {
         $element1 = ':root';
         $vars1 = ['white' => '#fff', 'black' => '#000'];

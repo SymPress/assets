@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SymPress\Assets\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use SymPress\Assets\Asset;
 use SymPress\Assets\AssetConfigurationApplier;
 use SymPress\Assets\Exception\InvalidArgumentException;
@@ -12,7 +13,6 @@ use SymPress\Assets\Script;
 use SymPress\Assets\ScriptLoadingStrategy;
 use SymPress\Assets\Style;
 use SymPress\Assets\StyleLoadingMode;
-use PHPUnit\Framework\Attributes\Test;
 
 final class AssetConfigurationApplierTest extends AbstractTestCase
 {
@@ -24,27 +24,27 @@ final class AssetConfigurationApplierTest extends AbstractTestCase
         $configured = (new AssetConfigurationApplier())->apply(
             $asset,
             [
-                'attributes' => ['defer' => true],
-                'condition' => 'lt IE 11',
+                'attributes'   => ['defer' => true],
+                'condition'    => 'lt IE 11',
                 'dependencies' => 'vendor',
-                'enqueue' => false,
-                'filePath' => '/tmp/app.js',
-                'handler' => AssetConfigurationApplierHandler::class,
-                'inFooter' => false,
-                'inline' => [
+                'enqueue'      => false,
+                'filePath'     => '/tmp/app.js',
+                'handler'      => AssetConfigurationApplierHandler::class,
+                'inFooter'     => false,
+                'inline'       => [
                     'before' => ['window.before = true;'],
-                    'after' => ['window.after = true;'],
+                    'after'  => ['window.after = true;'],
                 ],
-                'localize' => [
+                'localize'     => [
                     'appConfig' => ['enabled' => true],
                 ],
-                'location' => Asset::BACKEND,
-                'strategy' => ScriptLoadingStrategy::ASYNC,
-                'translation' => [
+                'location'     => Asset::BACKEND,
+                'strategy'     => ScriptLoadingStrategy::ASYNC,
+                'translation'  => [
                     'domain' => 'assets',
-                    'path' => '/languages',
+                    'path'   => '/languages',
                 ],
-                'version' => '1.2.3',
+                'version'      => '1.2.3',
             ],
         );
 
@@ -74,8 +74,8 @@ final class AssetConfigurationApplierTest extends AbstractTestCase
             [
                 'dependencies' => ['reset', 42, new \stdClass()],
                 'inlineStyles' => '.app{display:block;}',
-                'loadingMode' => StyleLoadingMode::PRELOAD,
-                'media' => 'screen',
+                'loadingMode'  => StyleLoadingMode::PRELOAD,
+                'media'        => 'screen',
             ],
         );
 
@@ -95,8 +95,8 @@ final class AssetConfigurationApplierTest extends AbstractTestCase
             [
                 'resourceHints' => [
                     [
-                        'relation' => ResourceHint::PRELOAD,
-                        'as' => 'script',
+                        'relation'      => ResourceHint::PRELOAD,
+                        'as'            => 'script',
                         'fetchpriority' => 'high',
                     ],
                     ResourceHint::preconnect('https://cdn.example.test', ['crossorigin' => true]),
@@ -121,7 +121,7 @@ final class AssetConfigurationApplierTest extends AbstractTestCase
             [
                 'inline' => [
                     'before' => 'window.before = true;',
-                    'after' => 'window.after = true;',
+                    'after'  => 'window.after = true;',
                 ],
             ],
         );

@@ -11,13 +11,11 @@ use SymPress\Assets\Script;
 use SymPress\Assets\ScriptLoadingStrategy;
 use SymPress\Assets\Tests\Unit\AbstractTestCase;
 use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 
 class ScriptTest extends AbstractTestCase
 {
-    /**
-     * @var \org\bovigo\vfs\vfsStreamDirectory
-     */
-    private $root;
+    private vfsStreamDirectory $root;
 
     public function setUp(): void
     {
@@ -25,9 +23,7 @@ class ScriptTest extends AbstractTestCase
         parent::setUp();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testBasic(): void
     {
         $script = new Script('foo', 'foo.js');
@@ -39,9 +35,7 @@ class ScriptTest extends AbstractTestCase
         static::assertSame(Asset::FRONTEND | Asset::ACTIVATE, $script->location());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testWithTranslation(): void
     {
         $script = new Script('handle', 'script.js');
@@ -62,7 +56,6 @@ class ScriptTest extends AbstractTestCase
 
     /**
      * @test
-     *
      * @dataProvider provideLocalized
      */
     public function testWithLocalize(string $objectName, $objectValue, $expected): void
@@ -76,9 +69,7 @@ class ScriptTest extends AbstractTestCase
         static::assertSame($expected, $script->localize());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testLocalizedSingleClosure(): void
     {
         $expected = ['foo' => ['bar' => 'baz']];
@@ -94,9 +85,7 @@ class ScriptTest extends AbstractTestCase
         static::assertSame([$objectName => $expected], $script->localize());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testInFooter(): void
     {
         $script = new Script('handle', 'script.js');
@@ -111,9 +100,7 @@ class ScriptTest extends AbstractTestCase
         static::assertTrue($script->inFooter());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testLocalizeCallable(): void
     {
         $expectedKey = 'foo';
@@ -145,9 +132,7 @@ class ScriptTest extends AbstractTestCase
         static::assertSame($expected, $script->enqueue());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testInlineScripts(): void
     {
         $script = new Script('handle', 'foo.js');
@@ -169,7 +154,6 @@ class ScriptTest extends AbstractTestCase
 
     /**
      * @test
-     *
      * @deprecated
      */
     public function testUseAsyncFilter(): void
@@ -184,7 +168,6 @@ class ScriptTest extends AbstractTestCase
 
     /**
      * @test
-     *
      * @deprecated
      */
     public function testUseDeferFilter(): void
@@ -213,9 +196,7 @@ class ScriptTest extends AbstractTestCase
         static::assertNull($script->loadingStrategy());
     }
 
-    /**
-     * @return \Generator<string, array>
-     */
+    /** @return \Generator<string, array> */
     public static function provideLocalized(): \Generator
     {
         yield 'string value' => [
@@ -248,7 +229,6 @@ class ScriptTest extends AbstractTestCase
 
     /**
      * @test
-     *
      * @dataProvider provideAssetsFile
      */
     public function testDependencyExtractionPlugin(
@@ -258,6 +238,7 @@ class ScriptTest extends AbstractTestCase
         array $expectedDependencies,
         string $expectedVersion,
     ): void {
+
         vfsStream::newFile($depsFileName)
             ->withContent($depsFileContent)
             ->at($this->root);
@@ -275,9 +256,7 @@ class ScriptTest extends AbstractTestCase
         static::assertSame($testee->version(), $expectedVersion);
     }
 
-    /**
-     * @return \Generator<string, array>
-     */
+    /** @return \Generator<string, array> */
     public static function provideAssetsFile(): \Generator
     {
         $expectedDependencies = ['foo', 'bar', 'baz'];
@@ -287,19 +266,19 @@ class ScriptTest extends AbstractTestCase
         $fileHash2 = md5((string) (time() + 1));
 
         $scriptFiles = [
-            'script file' => [
+            'script file'                                       => [
                 'script.js',
                 'script.asset.',
             ],
-            'script & deps file same hash' => [
+            'script & deps file same hash'                      => [
                 'script.' . $fileHash1 . '.js',
                 'script.' . $fileHash1 . '.asset.',
             ],
-            'script & deps file different hash' => [
+            'script & deps file different hash'                 => [
                 'script.' . $fileHash1 . '.js',
                 'script.' . $fileHash2 . '.asset.',
             ],
-            'script file with multiple dots' => [
+            'script file with multiple dots'                    => [
                 'admin.dashboard.main.js',
                 'admin.dashboard.main.asset.',
             ],
@@ -311,7 +290,7 @@ class ScriptTest extends AbstractTestCase
 
         foreach ($scriptFiles as $message => $files) {
             yield 'json - ' . $message => [
-                $files[0],          // script.js or script.{hash}.js
+                $files[0], // script.js or script.{hash}.js
                 $files[1] . 'json', // script(.{hash}).asset.json
                 json_encode($dependencies),
                 $expectedDependencies,
@@ -320,9 +299,7 @@ class ScriptTest extends AbstractTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testDependencyExtractionPluginUniqueDependencies(): void
     {
         $expectedDependencies = ['foo', 'bar', 'baz'];
@@ -362,9 +339,7 @@ class ScriptTest extends AbstractTestCase
         static::assertSame('late-version', $testee->version());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testDependencyExtractionPluginWithDependencies(): void
     {
         $jsonDependencies = ['foo', 'bar', 'baz'];
@@ -391,7 +366,6 @@ class ScriptTest extends AbstractTestCase
 
     /**
      * @test
-     *
      * @dataProvider provideVersions
      */
     public function testDependencyExtractionPluginWithVersion(
@@ -399,12 +373,13 @@ class ScriptTest extends AbstractTestCase
         string $dependencyExtractionPluginVersion,
         string $expectedVersion,
     ): void {
+
         vfsStream::newFile('script.asset.json')
             ->withContent(
                 json_encode(
                     [
                         'dependencies' => [],
-                        'version' => $dependencyExtractionPluginVersion,
+                        'version'      => $dependencyExtractionPluginVersion,
                     ],
                 ),
             )
@@ -422,9 +397,7 @@ class ScriptTest extends AbstractTestCase
         static::assertSame($expectedVersion, $testee->version());
     }
 
-    /**
-     * @return \Generator<string, array>
-     */
+    /** @return \Generator<string, array> */
     public static function provideVersions(): \Generator
     {
         yield 'version already set' => [
@@ -554,9 +527,7 @@ class ScriptTest extends AbstractTestCase
         static::assertSame([], $testee->dependencies());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testDependencyExtractionCanBeDisabled(): void
     {
         $expectedDependencies = ['foo', 'bar', 'baz'];
@@ -567,7 +538,7 @@ class ScriptTest extends AbstractTestCase
                 json_encode(
                     [
                         'dependencies' => $expectedDependencies,
-                        'version' => $expectedVersion,
+                        'version'      => $expectedVersion,
                     ],
                 ),
             )
@@ -586,9 +557,7 @@ class ScriptTest extends AbstractTestCase
         static::assertNotEquals($expectedVersion, $testee->version());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testDependencyExtractionEnabledByDefault(): void
     {
         $expectedDependencies = ['foo', 'bar', 'baz'];

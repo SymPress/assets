@@ -23,9 +23,7 @@ class AssetManagerTest extends AbstractTestCase
         Functions\when('wp_styles')->justReturn(\Mockery::mock('WP_Styles'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testBasic(): void
     {
         $assetManager = $this->factoryAssetManager();
@@ -34,9 +32,7 @@ class AssetManagerTest extends AbstractTestCase
         static::assertNotEmpty($assetManager->handlers());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testAssets(): void
     {
         $expectedHandle = 'foo';
@@ -53,9 +49,7 @@ class AssetManagerTest extends AbstractTestCase
         static::assertSame($script, $scripts[$expectedHandle]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testWithHandler(): void
     {
         $assetManager = $this->factoryAssetManager();
@@ -77,23 +71,21 @@ class AssetManagerTest extends AbstractTestCase
         static::assertSame($expectedHandler, $assetManager->handlers()['foo'] ?? null);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testRegister(): void
     {
         $assetManager = $this->factoryAssetManager();
 
         $handle = 'foo';
 
-        $myStyle = new class($handle, '') extends Style {
+        $myStyle = new class ($handle, '') extends Style {
         };
         $script = new Script($handle, '');
 
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($myStyle, $script) {
+            ->whenHappen(static function (AssetManager $manager) use ($myStyle, $script): void {
                 $manager->register($myStyle, $script);
             });
 
@@ -112,7 +104,7 @@ class AssetManagerTest extends AbstractTestCase
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($script1, $script2) {
+            ->whenHappen(static function (AssetManager $manager) use ($script1, $script2): void {
                 $manager->register($script1, $script2);
             });
 
@@ -133,7 +125,7 @@ class AssetManagerTest extends AbstractTestCase
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($script) {
+            ->whenHappen(static function (AssetManager $manager) use ($script): void {
                 $manager->register($script);
             });
 
@@ -149,13 +141,13 @@ class AssetManagerTest extends AbstractTestCase
         $assetManager = $this->factoryAssetManager();
         $assetManager->extendAsset($handle, Script::class, [
             'dependencies' => ['core'],
-            'enqueue' => true,
-            'version' => '1',
+            'enqueue'      => true,
+            'version'      => '1',
         ]);
         $assetManager->extendAsset($handle, Script::class, [
             'dependencies' => ['feature'],
-            'enqueue' => false,
-            'version' => '2',
+            'enqueue'      => false,
+            'version'      => '2',
         ]);
 
         $script = new Script($handle, '');
@@ -163,7 +155,7 @@ class AssetManagerTest extends AbstractTestCase
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($script) {
+            ->whenHappen(static function (AssetManager $manager) use ($script): void {
                 $manager->register($script);
             });
 
@@ -186,7 +178,7 @@ class AssetManagerTest extends AbstractTestCase
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($handle, $script) {
+            ->whenHappen(static function (AssetManager $manager) use ($handle, $script): void {
                 $manager->extendAsset($handle, Script::class, ['enqueue' => false]);
                 $manager->register($script);
             });
@@ -207,7 +199,7 @@ class AssetManagerTest extends AbstractTestCase
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($script) {
+            ->whenHappen(static function (AssetManager $manager) use ($script): void {
                 $manager->register($script);
             });
 
@@ -239,7 +231,7 @@ class AssetManagerTest extends AbstractTestCase
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($script) {
+            ->whenHappen(static function (AssetManager $manager) use ($script): void {
                 $manager->register($script);
             });
 
@@ -277,7 +269,7 @@ class AssetManagerTest extends AbstractTestCase
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($script) {
+            ->whenHappen(static function (AssetManager $manager) use ($script): void {
                 $manager->register($script);
             });
 
@@ -288,15 +280,13 @@ class AssetManagerTest extends AbstractTestCase
         static::assertSame(1, $handler->registrations);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testCurrentAssets(): void
     {
-        $asset1 = new class('asset-1', '', Asset::FRONTEND | Asset::BLOCK_ASSETS) extends Script {
+        $asset1 = new class ('asset-1', '', Asset::FRONTEND | Asset::BLOCK_ASSETS) extends Script {
         };
 
-        $asset2 = new class('asset-2', '', Asset::BACKEND) extends Script {
+        $asset2 = new class ('asset-2', '', Asset::BACKEND) extends Script {
         };
 
         $assetManager = $this->factoryAssetManager();
@@ -304,7 +294,7 @@ class AssetManagerTest extends AbstractTestCase
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($asset1, $asset2) {
+            ->whenHappen(static function (AssetManager $manager) use ($asset1, $asset2): void {
                 $manager->register($asset1, $asset2);
             });
 
@@ -325,21 +315,19 @@ class AssetManagerTest extends AbstractTestCase
         static::assertSame($asset2, $backendAssets[0]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testCurrentAssetsUndefinedHandler(): void
     {
-        $asset = new class('asset', '') extends Style {
+        $asset = new class ('asset', '') extends Style {
         };
-        $asset->useHandler(__CLASS__);
+        $asset->useHandler(self::class);
 
         $assetManager = $this->factoryAssetManager();
 
         Actions\expectDone(AssetManager::ACTION_SETUP)
             ->once()
             ->with($assetManager)
-            ->whenHappen(static function (AssetManager $manager) use ($asset) {
+            ->whenHappen(static function (AssetManager $manager) use ($asset): void {
                 $manager->register($asset);
             });
 
@@ -367,30 +355,26 @@ class AssetManagerTest extends AbstractTestCase
         static::assertSame([$asset1, $asset2], $assetManager->currentAssets(Asset::HOOK_FRONTEND));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testAsset(): void
     {
         $assetManager = $this->factoryAssetManager();
 
         $handle = 'asset';
 
-        $asset = new class($handle, '') extends Style {
+        $asset = new class ($handle, '') extends Style {
         };
 
         $assetManager->register($asset);
 
-        static::assertSame($asset, $assetManager->asset($handle, get_class($asset)));
+        static::assertSame($asset, $assetManager->asset($handle, $asset::class));
         static::assertSame($asset, $assetManager->asset($handle, Style::class));
         static::assertNull($assetManager->asset('undefined handle name', Style::class));
-        static::assertNull($assetManager->asset($handle, __CLASS__));
+        static::assertNull($assetManager->asset($handle, self::class));
     }
 
-    /**
-     * @test
-     */
-    public function testSetupHappenOnce()
+    /** @test */
+    public function testSetupHappenOnce(): void
     {
         $assetManager = $this->factoryAssetManager(WpContext::BACKOFFICE);
 
@@ -403,9 +387,7 @@ class AssetManagerTest extends AbstractTestCase
         static::assertFalse($assetManager->setup());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testSetupNoHooksResolved(): void
     {
         $assetManager = $this->factoryAssetManager(WpContext::CRON);
