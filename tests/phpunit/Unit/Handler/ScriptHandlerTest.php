@@ -20,9 +20,7 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 class ScriptHandlerTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function testBasic(): void
     {
         $scriptsStub = \Mockery::mock('\WP_Scripts');
@@ -33,9 +31,7 @@ class ScriptHandlerTest extends AbstractTestCase
         static::assertSame('script_loader_tag', $script->filterHook());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testRegisterEnqueue(): void
     {
         $data = ['baz' => 'bam'];
@@ -68,7 +64,7 @@ class ScriptHandlerTest extends AbstractTestCase
                     static::assertSame(
                         [
                             'in_footer' => true,
-                            'strategy' => ScriptLoadingStrategy::DEFER,
+                            'strategy'  => ScriptLoadingStrategy::DEFER,
                         ],
                         $args,
                     );
@@ -90,7 +86,7 @@ class ScriptHandlerTest extends AbstractTestCase
         Functions\expect('wp_set_script_translations')
             ->once()
             ->andReturnUsing(
-                static function (string $handle, string $domain, string $path) {
+                static function (string $handle, string $domain, string $path): void {
                     static::assertSame('handle', $handle);
                     static::assertSame('i10n', $domain);
                     static::assertSame('i10n.json', $path);
@@ -123,9 +119,7 @@ class ScriptHandlerTest extends AbstractTestCase
         static::assertTrue((new ScriptHandler($scriptsStub))->enqueue($script));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testEnqueueNotTrue(): void
     {
         $script = (new Script('handle', 'url'))->canEnqueue('__return_false');
@@ -196,9 +190,7 @@ class ScriptHandlerTest extends AbstractTestCase
         static::assertSame(1, $calls);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testFilter(): void
     {
         $return = static function (string $html): string {
@@ -238,7 +230,7 @@ class ScriptHandlerTest extends AbstractTestCase
     {
         $filter = static fn (string $html): string => $html;
         $first = (new Script('asset', ''))->withFilters($filter);
-        $second = (new class('asset', '') extends Script {
+        $second = (new class ('asset', '') extends Script {
         })->withFilters($filter);
         $script = new ScriptHandler(\Mockery::mock('\WP_Scripts'));
 
@@ -251,9 +243,7 @@ class ScriptHandlerTest extends AbstractTestCase
         $script->filter($second);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testWithOutputFilter(): void
     {
         $script = new ScriptHandler(\Mockery::mock('\WP_Scripts'));

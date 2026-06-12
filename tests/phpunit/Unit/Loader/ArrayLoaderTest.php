@@ -12,23 +12,21 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 class ArrayLoaderTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
-    public function testLoad()
+    /** @test */
+    public function testLoad(): void
     {
         $input = [
             [
-                'handle' => 'foo',
-                'url' => 'foo.css',
+                'handle'   => 'foo',
+                'url'      => 'foo.css',
                 'location' => Asset::FRONTEND,
-                'type' => Style::class,
+                'type'     => Style::class,
             ],
             [
-                'handle' => 'bar',
-                'url' => 'bar.js',
+                'handle'   => 'bar',
+                'url'      => 'bar.js',
                 'location' => Asset::FRONTEND,
-                'type' => Script::class,
+                'type'     => Script::class,
             ],
         ];
 
@@ -38,17 +36,15 @@ class ArrayLoaderTest extends AbstractTestCase
         static::assertInstanceOf(Script::class, $assets[1]);
     }
 
-    /**
-     * @test
-     */
-    public function testLoadDisabledAutodiscoverVersion()
+    /** @test */
+    public function testLoadDisabledAutodiscoverVersion(): void
     {
         $input = [
             [
-                'handle' => 'foo',
-                'url' => 'foo.css',
+                'handle'   => 'foo',
+                'url'      => 'foo.css',
                 'location' => Asset::FRONTEND,
-                'type' => Style::class,
+                'type'     => Style::class,
             ],
         ];
 
@@ -63,10 +59,8 @@ class ArrayLoaderTest extends AbstractTestCase
         static::assertNull($asset->version());
     }
 
-    /**
-     * @test
-     */
-    public function testLoadWithAttributes()
+    /** @test */
+    public function testLoadWithAttributes(): void
     {
         $expectedAttributes = [
             'data-id' => 'foo',
@@ -74,10 +68,10 @@ class ArrayLoaderTest extends AbstractTestCase
 
         $input = [
             [
-                'handle' => 'foo',
-                'url' => 'foo.css',
-                'location' => Asset::FRONTEND,
-                'type' => Style::class,
+                'handle'     => 'foo',
+                'url'        => 'foo.css',
+                'location'   => Asset::FRONTEND,
+                'type'       => Style::class,
                 'attributes' => $expectedAttributes,
             ],
         ];

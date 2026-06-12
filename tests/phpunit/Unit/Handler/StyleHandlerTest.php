@@ -12,9 +12,7 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 class StyleHandlerTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function testBasic(): void
     {
         $stylesStub = \Mockery::mock('\WP_Styles');
@@ -23,9 +21,7 @@ class StyleHandlerTest extends AbstractTestCase
         static::assertSame('style_loader_tag', $handler->filterHook());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testRegisterEnqueue(): void
     {
         $data = ['baz' => 'bam'];
@@ -74,9 +70,7 @@ class StyleHandlerTest extends AbstractTestCase
         static::assertTrue((new StyleHandler($stylesStub))->enqueue($style));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testEnqueueNotTrue(): void
     {
         $assetStub = \Mockery::mock(Asset::class);

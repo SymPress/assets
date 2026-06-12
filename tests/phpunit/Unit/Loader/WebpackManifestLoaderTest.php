@@ -15,10 +15,7 @@ use org\bovigo\vfs\vfsStreamDirectory;
 
 class WebpackManifestLoaderTest extends AbstractTestCase
 {
-    /**
-     * @var vfsStreamDirectory
-     */
-    private $root;
+    private vfsStreamDirectory $root;
 
     public function setUp(): void
     {
@@ -28,7 +25,6 @@ class WebpackManifestLoaderTest extends AbstractTestCase
 
     /**
      * @test
-     *
      * @dataProvider provideManifest
      */
     public function testLoadFromManifest(
@@ -37,6 +33,7 @@ class WebpackManifestLoaderTest extends AbstractTestCase
         string $expectedFileName,
         string $expectedClass,
     ): void {
+
         $expectedDirUrl = 'http://localhost.com/assets/';
         $expectedFileUrl = $expectedDirUrl . ltrim($expectedFileName, '/');
 
@@ -53,17 +50,15 @@ class WebpackManifestLoaderTest extends AbstractTestCase
         static::assertInstanceOf($expectedClass, $asset);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testLoadFromManifestMultipleAssets(): void
     {
         $json = json_encode(
             [
-                'script' => 'script.js',
-                'style' => 'style.css',
-                'module' => 'module.mjs',
-                'custom-module' => 'custom.module.js',
+                'script'         => 'script.js',
+                'style'          => 'style.css',
+                'module'         => 'module.mjs',
+                'custom-module'  => 'custom.module.js',
                 '@vendor/module' => 'vendor.module.js',
             ],
         );
@@ -85,15 +80,15 @@ class WebpackManifestLoaderTest extends AbstractTestCase
         $json = json_encode(
             [
                 'handle-name' => [
-                    'filePath' => 'handle-name-script.js',
-                    'location' => [
+                    'filePath'   => 'handle-name-script.js',
+                    'location'   => [
                         'frontend',
                         'backend',
                     ],
-                    'enqueue' => false,
-                    'inFooter' => true,
-                    'version' => '1.0.0',
-                    'condition' => '',
+                    'enqueue'    => false,
+                    'inFooter'   => true,
+                    'version'    => '1.0.0',
+                    'condition'  => '',
                     'attributes' => [
                         'async' => false,
                         'defer' => false,
@@ -117,15 +112,13 @@ class WebpackManifestLoaderTest extends AbstractTestCase
         static::assertSame(Asset::BACKEND | Asset::FRONTEND, $asset->location());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testLoadFromManifestNotSupportedTypes(): void
     {
         $json = json_encode(
             [
                 'an image' => 'cat.jpeg',
-                'a font' => 'fancy-font.woff',
+                'a font'   => 'fancy-font.woff',
             ],
         );
 
@@ -137,7 +130,6 @@ class WebpackManifestLoaderTest extends AbstractTestCase
 
     /**
      * @test
-     *
      * @dataProvider provideManifestWithAlternativeUrl
      */
     public function testLoadFromManifestWithAlternativeUrl(
@@ -145,6 +137,7 @@ class WebpackManifestLoaderTest extends AbstractTestCase
         string $alternativeUrl,
         string $expectedUrl,
     ): void {
+
         $loader = new WebpackManifestLoader();
         $loader->withDirectoryUrl($alternativeUrl);
         $assets = $loader->load($this->mockManifestJson($json));
@@ -158,9 +151,9 @@ class WebpackManifestLoaderTest extends AbstractTestCase
     {
         $json = json_encode(
             [
-                'first' => [
+                'first'  => [
                     'filePath' => 'first.js',
-                    'version' => '1.0.0',
+                    'version'  => '1.0.0',
                 ],
                 'second' => [
                     'filePath' => 'second.js',
@@ -186,7 +179,7 @@ class WebpackManifestLoaderTest extends AbstractTestCase
             [
                 'script' => [
                     'dependencyExtractionEnabled' => false,
-                    'filePath' => 'script.js',
+                    'filePath'                    => 'script.js',
                 ],
             ],
         );

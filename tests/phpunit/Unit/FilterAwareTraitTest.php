@@ -12,9 +12,7 @@ use SymPress\Assets\OutputFilter\InlineAssetOutputFilter;
 
 class FilterAwareTraitTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function testFilters(): void
     {
         $asset = $this->createFilterAwareAsset();
@@ -34,9 +32,7 @@ class FilterAwareTraitTest extends AbstractTestCase
         static::assertEquals([$expectedFilter1, $expectedFilter2], $asset->filters());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testUseInlineFilter(): void
     {
         $asset = $this->createFilterAwareAsset();
@@ -47,9 +43,7 @@ class FilterAwareTraitTest extends AbstractTestCase
         static::assertSame(InlineAssetOutputFilter::class, $filters[0]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testAttributes(): void
     {
         $expectedAttributes = ['foo' => 'bar'];
@@ -63,9 +57,7 @@ class FilterAwareTraitTest extends AbstractTestCase
         static::assertSame(AttributesOutputFilter::class, $filters[0]);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testAttributesAddedMultipleTimes(): void
     {
         $expectedValue = 'baz';
@@ -106,12 +98,12 @@ class FilterAwareTraitTest extends AbstractTestCase
 
     private function createFilterAwareAsset(string $handle = '', string $src = ''): FilterAwareAsset
     {
-        return new class($handle, $src) extends BaseAsset implements FilterAwareAsset {
+        return new class ($handle, $src) extends BaseAsset implements FilterAwareAsset {
             use FilterAwareTrait;
 
             protected function defaultHandler(): string
             {
-                return __CLASS__;
+                return self::class;
             }
         };
     }

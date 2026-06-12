@@ -13,9 +13,7 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 class ScriptModuleHandlerTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function testBasic(): void
     {
         $handler = new ScriptModuleHandler();
@@ -23,9 +21,7 @@ class ScriptModuleHandlerTest extends AbstractTestCase
         static::assertInstanceOf(AssetHandler::class, $handler);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testRegisterEnqueue(): void
     {
         $handler = new class extends ScriptModuleHandler {
@@ -64,9 +60,7 @@ class ScriptModuleHandlerTest extends AbstractTestCase
         static::assertTrue($result);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testSkipEnqueueIfScriptModulesNotSupported(): void
     {
         $handler = new ScriptModuleHandler();
