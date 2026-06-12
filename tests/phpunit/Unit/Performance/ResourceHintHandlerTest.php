@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace SymPress\Assets\Tests\Unit\Performance;
 
 use Brain\Monkey\Functions;
+use PHPUnit\Framework\Attributes\Test;
 use SymPress\Assets\Performance\ResourceHint;
 use SymPress\Assets\Performance\ResourceHintHandler;
 use SymPress\Assets\Script;
 use SymPress\Assets\Tests\Unit\AbstractTestCase;
-use PHPUnit\Framework\Attributes\Test;
 
 final class ResourceHintHandlerTest extends AbstractTestCase
 {
@@ -36,8 +36,8 @@ final class ResourceHintHandlerTest extends AbstractTestCase
         self::assertSame(
             [
                 [
-                    'href' => 'https://example.test/app.js',
-                    'as' => 'script',
+                    'href'          => 'https://example.test/app.js',
+                    'as'            => 'script',
                     'fetchpriority' => 'high',
                 ],
             ],

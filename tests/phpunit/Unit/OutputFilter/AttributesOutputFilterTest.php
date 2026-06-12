@@ -15,10 +15,10 @@ final class AttributesOutputFilterTest extends AbstractTestCase
     {
         $asset = (new Script('asset', 'https://example.test/app.js'))
             ->withAttributes([
-                'defer' => true,
+                'defer'       => true,
                 'data-module' => 'booking',
-                'src' => 'ignored',
-                'bad attr' => 'ignored',
+                'src'         => 'ignored',
+                'bad attr'    => 'ignored',
             ]);
 
         $html = '<script id="asset-js" src="https://example.test/app.js"></script>';
@@ -34,7 +34,7 @@ final class AttributesOutputFilterTest extends AbstractTestCase
     {
         $asset = (new Style('asset', 'https://example.test/app.css'))
             ->withAttributes([
-                'media' => 'print',
+                'media'         => 'print',
                 'data-critical' => true,
             ]);
 

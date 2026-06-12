@@ -11,18 +11,14 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 class AsyncScriptOutputFilterTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
-    public function testBasic()
+    /** @test */
+    public function testBasic(): void
     {
         static::assertInstanceOf(AssetOutputFilter::class, new AsyncScriptOutputFilter());
     }
 
-    /**
-     * @test
-     */
-    public function testRender()
+    /** @test */
+    public function testRender(): void
     {
         $testee = new AsyncScriptOutputFilter();
 

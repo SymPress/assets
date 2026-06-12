@@ -10,9 +10,7 @@ use SymPress\Assets\Util\AssetHookResolver;
 
 class AssetHookResolverTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function testResolveNothingWhenNotNeeded(): void
     {
         $hookResolver = new AssetHookResolver(new ContextStub());
@@ -20,9 +18,7 @@ class AssetHookResolverTest extends AbstractTestCase
         static::assertSame([], $hookResolver->resolve());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testResolveActivate(): void
     {
         $context = new ContextStub(isWpActivate: true);
@@ -31,9 +27,7 @@ class AssetHookResolverTest extends AbstractTestCase
         static::assertSame([Asset::HOOK_ACTIVATE], $hookResolver->resolve());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testResolveLogin(): void
     {
         $context = new ContextStub(isLogin: true);
@@ -42,9 +36,7 @@ class AssetHookResolverTest extends AbstractTestCase
         static::assertSame([Asset::HOOK_LOGIN], $hookResolver->resolve());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testResolveFrontend(): void
     {
         $context = new ContextStub(isFrontoffice: true);
@@ -56,9 +48,7 @@ class AssetHookResolverTest extends AbstractTestCase
         );
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testResolveBackend(): void
     {
         $context = new ContextStub(isBackoffice: true);
@@ -77,7 +67,6 @@ class AssetHookResolverTest extends AbstractTestCase
 
     /**
      * @test
-     *
      * @dataProvider provideLastHook
      */
     public function testResolveLastHook(ContextStub $context, $expected): void

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Composer\Autoload\ClassLoader;
+
 $testsDir = str_replace('\\', '/', __DIR__);
 $libDir = dirname($testsDir, 2);
 $vendorDirs = [
@@ -24,7 +26,7 @@ foreach ($vendorDirs as $candidate) {
     break;
 }
 
-if (null === $vendorDir || null === $autoload) {
+if ($vendorDir === null || $autoload === null) {
     exit('Please install via Composer before running tests.');
 }
 
@@ -47,7 +49,7 @@ if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
     $loader = require $autoload;
 }
 
-if ($loader instanceof Composer\Autoload\ClassLoader) {
+if ($loader instanceof ClassLoader) {
     $loader->addPsr4('SymPress\\Assets\\', ["{$libDir}/src", "{$libDir}/bundle"], true);
 }
 

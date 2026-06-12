@@ -11,18 +11,14 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 class DeferScriptOutputFilterTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
-    public function testBasic()
+    /** @test */
+    public function testBasic(): void
     {
         static::assertInstanceOf(AssetOutputFilter::class, new DeferScriptOutputFilter());
     }
 
-    /**
-     * @test
-     */
-    public function testRender()
+    /** @test */
+    public function testRender(): void
     {
         $testee = new DeferScriptOutputFilter();
 

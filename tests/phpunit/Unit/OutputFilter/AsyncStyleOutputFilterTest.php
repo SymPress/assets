@@ -12,18 +12,14 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 class AsyncStyleOutputFilterTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
-    public function testBasic()
+    /** @test */
+    public function testBasic(): void
     {
         static::assertInstanceOf(AssetOutputFilter::class, new AsyncStyleOutputFilter());
     }
 
-    /**
-     * @test
-     */
-    public function testRender()
+    /** @test */
+    public function testRender(): void
     {
         $testee = new AsyncStyleOutputFilter();
 

@@ -30,18 +30,14 @@ class InlineAssetOutputFilterTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
-    public function testBasic()
+    /** @test */
+    public function testBasic(): void
     {
         static::assertInstanceOf(AssetOutputFilter::class, new InlineAssetOutputFilter());
     }
 
-    /**
-     * @test
-     */
-    public function testRenderStyle()
+    /** @test */
+    public function testRenderStyle(): void
     {
         $expectedVersion = 'foo';
         $expectedHandle = 'bar';
@@ -67,10 +63,8 @@ class InlineAssetOutputFilterTest extends AbstractTestCase
         static::assertStringContainsString('</style>', $result);
     }
 
-    /**
-     * @test
-     */
-    public function testRenderScript()
+    /** @test */
+    public function testRenderScript(): void
     {
         $expectedVersion = 'foo';
         $expectedHandle = 'bar';
@@ -124,13 +118,13 @@ class InlineAssetOutputFilterTest extends AbstractTestCase
             ->withFilePath($filePath)
             ->withVersion('1')
             ->withAttributes([
-                'nonce' => 'nonce-value',
+                'nonce'            => 'nonce-value',
                 'data-no-optimize' => true,
-                'data-cfasync' => 'false',
-                'src' => 'https://attacker.test/override.js',
-                'integrity' => 'ignored',
-                'defer' => true,
-                'bad attr' => 'ignored',
+                'data-cfasync'     => 'false',
+                'src'              => 'https://attacker.test/override.js',
+                'integrity'        => 'ignored',
+                'defer'            => true,
+                'bad attr'         => 'ignored',
             ]);
 
         $result = $this->filterForRoot()(
@@ -163,10 +157,8 @@ class InlineAssetOutputFilterTest extends AbstractTestCase
         static::assertStringContainsString('<\/script><script>alert(1)<\/script>', $result);
     }
 
-    /**
-     * @test
-     */
-    public function testRenderNonExistingFile()
+    /** @test */
+    public function testRenderNonExistingFile(): void
     {
         $stub = \Mockery::mock(Asset::class . ',' . Script::class);
         $stub->expects('filePath')->andReturn('non-existing.file');
