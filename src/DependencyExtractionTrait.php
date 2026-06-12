@@ -50,9 +50,7 @@ trait DependencyExtractionTrait
         return $this;
     }
 
-    /**
-     * @psalm-suppress UnresolvableInclude
-     */
+    /** @psalm-suppress UnresolvableInclude */
     protected function resolveDependencyExtractionPlugin(): bool
     {
         if ($this->resolvedDependencyExtractionPlugin) {
@@ -68,7 +66,7 @@ trait DependencyExtractionTrait
         }
 
         $depsFilePath = $depsFile->getPathname();
-        $data = 'json' === $depsFile->getExtension()
+        $data = $depsFile->getExtension() === 'json'
             ? (new JsonFileReader())->read($depsFilePath)
             : $this->loadPhpDependencyFile($depsFilePath);
 
@@ -103,7 +101,7 @@ trait DependencyExtractionTrait
         $policy ??= new DependencyFilePolicy($this->phpDependencyFilesAllowed, $this->dependencyFileMaxBytes);
 
         $filePath = $this->filePath();
-        if ('' === $filePath) {
+        if ($filePath === '') {
             return null;
         }
 
@@ -120,14 +118,14 @@ trait DependencyExtractionTrait
                 Path::join($path, "{$fileName}." . self::DEPENDENCY_FILE_MARKER . '.json'),
                 $policy,
             );
-            if (null !== $exactJsonFile) {
+            if ($exactJsonFile !== null) {
                 return $exactJsonFile;
             }
         }
 
         foreach ($fileNames as $fileName) {
             $hashedJsonFile = $this->findHashedDependencyFile($path, $fileName, 'json', $policy);
-            if (null !== $hashedJsonFile) {
+            if ($hashedJsonFile !== null) {
                 return $hashedJsonFile;
             }
         }
@@ -137,14 +135,14 @@ trait DependencyExtractionTrait
                 Path::join($path, "{$fileName}." . self::DEPENDENCY_FILE_MARKER . '.php'),
                 $policy,
             );
-            if (null !== $exactPhpFile) {
+            if ($exactPhpFile !== null) {
                 return $exactPhpFile;
             }
         }
 
         foreach ($fileNames as $fileName) {
             $hashedPhpFile = $this->findHashedDependencyFile($path, $fileName, 'php', $policy);
-            if (null !== $hashedPhpFile) {
+            if ($hashedPhpFile !== null) {
                 return $hashedPhpFile;
             }
         }
@@ -152,9 +150,7 @@ trait DependencyExtractionTrait
         return null;
     }
 
-    /**
-     * @return non-empty-list<string>
-     */
+    /** @return non-empty-list<string> */
     private function dependencyFileBaseNames(string $filePath): array
     {
         $fileName = Path::getFilenameWithoutExtension($filePath);
@@ -172,13 +168,14 @@ trait DependencyExtractionTrait
         string $filePath,
         ?DependencyFilePolicy $policy = null,
     ): ?\SplFileInfo {
+
         if (!is_file($filePath)) {
             return null;
         }
 
         $file = new \SplFileInfo($filePath);
 
-        return null === $policy || $policy->allows($file)
+        return $policy === null || $policy->allows($file)
             ? $file
             : null;
     }
@@ -189,6 +186,7 @@ trait DependencyExtractionTrait
         string $extension,
         ?DependencyFilePolicy $policy = null,
     ): ?\SplFileInfo {
+
         $regex = sprintf(
             '/^%s\.[a-zA-Z0-9]+\.%s\.%s$/',
             preg_quote($fileName, '/'),
@@ -198,7 +196,7 @@ trait DependencyExtractionTrait
 
         foreach (Finder::create()->files()->depth('== 0')->in($path)->name($regex)->sortByName() as $fileInfo) {
             $file = $this->dependencyFileFromPath($fileInfo->getPathname(), $policy);
-            if (null !== $file) {
+            if ($file !== null) {
                 return $file;
             }
         }
@@ -208,7 +206,6 @@ trait DependencyExtractionTrait
 
     /**
      * @return array<string, mixed>
-     *
      * @psalm-suppress UnresolvableInclude
      */
     private function loadPhpDependencyFile(string $filePath): array
@@ -221,17 +218,17 @@ trait DependencyExtractionTrait
 
         $normalized = [];
         foreach ($data as $key => $value) {
-            if (is_string($key)) {
-                $normalized[$key] = $value;
+            if (!is_string($key)) {
+                continue;
             }
+
+            $normalized[$key] = $value;
         }
 
         return $normalized;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private function normalizeDependencyHandles(mixed $dependencies): array
     {
         if (!is_array($dependencies)) {
@@ -253,7 +250,7 @@ trait DependencyExtractionTrait
 
     private function normalizeDependencyVersion(mixed $version): ?string
     {
-        if (null === $version) {
+        if ($version === null) {
             return null;
         }
 
