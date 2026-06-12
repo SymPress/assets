@@ -54,7 +54,6 @@ final class SiteGroundOptimizerAdapter implements CacheOptimizerAdapter
 
     /**
      * @param list<string> $handles
-     *
      * @return array<mixed>
      */
     private static function append(mixed $excluded, array $handles): array
@@ -63,9 +62,11 @@ final class SiteGroundOptimizerAdapter implements CacheOptimizerAdapter
 
         if (is_array($excluded)) {
             foreach ($excluded as $value) {
-                if (is_scalar($value) || $value instanceof \Stringable) {
-                    $normalized[] = (string) $value;
+                if (!is_scalar($value) && !($value instanceof \Stringable)) {
+                    continue;
                 }
+
+                $normalized[] = (string) $value;
             }
         } elseif (is_scalar($excluded) || $excluded instanceof \Stringable) {
             $normalized[] = (string) $excluded;

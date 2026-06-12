@@ -53,9 +53,7 @@ final class AutoptimizeAdapter implements CacheOptimizerAdapter
         );
     }
 
-    /**
-     * @param list<string> $identifiers
-     */
+    /** @param list<string> $identifiers */
     private static function append(mixed $excluded, array $identifiers): mixed
     {
         if (is_array($excluded)) {
@@ -64,7 +62,7 @@ final class AutoptimizeAdapter implements CacheOptimizerAdapter
 
         $values = array_filter(
             array_map('trim', explode(',', is_scalar($excluded) ? (string) $excluded : '')),
-            static fn (string $value): bool => '' !== $value,
+            static fn (string $value): bool => $value !== '',
         );
 
         return implode(', ', array_values(array_unique([...$values, ...$identifiers])));
@@ -72,7 +70,6 @@ final class AutoptimizeAdapter implements CacheOptimizerAdapter
 
     /**
      * @param list<string> $identifiers
-     *
      * @return list<string>
      */
     private static function appendToArray(mixed $excluded, array $identifiers): array
@@ -81,9 +78,11 @@ final class AutoptimizeAdapter implements CacheOptimizerAdapter
 
         if (is_array($excluded)) {
             foreach ($excluded as $value) {
-                if (is_scalar($value) || $value instanceof \Stringable) {
-                    $values[] = (string) $value;
+                if (!is_scalar($value) && !($value instanceof \Stringable)) {
+                    continue;
                 }
+
+                $values[] = (string) $value;
             }
         }
 

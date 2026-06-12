@@ -60,7 +60,7 @@ final class W3TotalCacheAdapter implements CacheOptimizerAdapter
             return false;
         }
 
-        return true === filter_var((string) $value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        return filter_var((string) $value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === true;
     }
 
     private static function nullableString(mixed $value): ?string
@@ -82,7 +82,7 @@ final class W3TotalCacheAdapter implements CacheOptimizerAdapter
     private static function matchesAnyAsset(array $references, array $assets): bool
     {
         foreach ($references as $reference) {
-            if (null === $reference || '' === $reference) {
+            if ($reference === null || $reference === '') {
                 continue;
             }
 
@@ -96,12 +96,10 @@ final class W3TotalCacheAdapter implements CacheOptimizerAdapter
         return false;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private static function tagReferences(string $tag, string $attribute): array
     {
-        if (1 !== preg_match('/\s' . preg_quote($attribute, '/') . '\s*=\s*(["\'])(.*?)\1/i', $tag, $matches)) {
+        if (preg_match('/\s' . preg_quote($attribute, '/') . '\s*=\s*(["\'])(.*?)\1/i', $tag, $matches) !== 1) {
             return [];
         }
 

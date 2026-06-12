@@ -75,7 +75,7 @@ trait CacheOptimizationAwareTrait
             $attributes['data-no-async'] = true;
         }
 
-        if ([] === $attributes) {
+        if ($attributes === []) {
             return;
         }
 
