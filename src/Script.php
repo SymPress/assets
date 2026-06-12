@@ -8,36 +8,28 @@ use SymPress\Assets\Handler\ScriptHandler;
 
 class Script extends BaseAsset implements Asset, DataAwareAsset, DependencyExtractionAwareAsset, FilterAwareAsset
 {
-    use DependencyExtractionTrait;
     use DataAwareTrait;
+    use DependencyExtractionTrait;
     use FilterAwareTrait;
 
-    /**
-     * @var array<string, mixed>
-     */
+    /** @var array<string, mixed> */
     protected array $localize = [];
 
-    /**
-     * @var array{after:string[], before:string[]}
-     */
+    /** @var array{after:array<string>, before:array<string>} */
     protected array $inlineScripts = [
         'before' => [],
-        'after' => [],
+        'after'  => [],
     ];
 
     protected bool $inFooter = true;
 
-    /**
-     * @var ScriptLoadingStrategy::ASYNC|ScriptLoadingStrategy::DEFER|null
-     */
+    /** @var ScriptLoadingStrategy::ASYNC|ScriptLoadingStrategy::DEFER|null */
     protected ?string $loadingStrategy = ScriptLoadingStrategy::DEFER;
 
-    /**
-     * @var array{domain:string, path:string|null}
-     */
+    /** @var array{domain:string, path:string|null} */
     protected array $translation = [
         'domain' => '',
-        'path' => null,
+        'path'   => null,
     ];
 
     public function __construct(
@@ -46,6 +38,7 @@ class Script extends BaseAsset implements Asset, DataAwareAsset, DependencyExtra
         int $location = Asset::FRONTEND | Asset::ACTIVATE,
         bool $dependencyExtractionEnabled = true,
     ) {
+
         parent::__construct($handle, $url, $location);
         $this->dependencyExtractionEnabled = $dependencyExtractionEnabled;
     }
@@ -59,9 +52,7 @@ class Script extends BaseAsset implements Asset, DataAwareAsset, DependencyExtra
         return $this;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function localize(): array
     {
         $output = [];
@@ -74,9 +65,7 @@ class Script extends BaseAsset implements Asset, DataAwareAsset, DependencyExtra
         return $output;
     }
 
-    /**
-     * @param string|int|array<mixed>|callable $data
-     */
+    /** @param string|int|array<mixed>|callable $data */
     public function withLocalize(string $objectName, $data): static
     {
         $this->localize[$objectName] = $data;
@@ -137,9 +126,7 @@ class Script extends BaseAsset implements Asset, DataAwareAsset, DependencyExtra
         return $this->withLoadingStrategy(ScriptLoadingStrategy::ASYNC);
     }
 
-    /**
-     * @return array{before:string[], after:string[]}
-     */
+    /** @return array{before:array<string>, after:array<string>} */
     public function inlineScripts(): array
     {
         return $this->inlineScripts;
@@ -159,9 +146,7 @@ class Script extends BaseAsset implements Asset, DataAwareAsset, DependencyExtra
         return $this;
     }
 
-    /**
-     * @return array{domain:string, path:string|null}
-     */
+    /** @return array{domain:string, path:string|null} */
     public function translation(): array
     {
         return $this->translation;
@@ -194,9 +179,6 @@ class Script extends BaseAsset implements Asset, DataAwareAsset, DependencyExtra
         return $this->defer();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function defaultHandler(): string
     {
         return ScriptHandler::class;
@@ -213,9 +195,6 @@ class Script extends BaseAsset implements Asset, DataAwareAsset, DependencyExtra
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function version(): ?string
     {
         if ($this->dependencyExtractionEnabled) {
