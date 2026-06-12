@@ -15,9 +15,7 @@ trait DataAwareTrait
      */
     protected array $data = [];
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function data(): array
     {
         return $this->data;
