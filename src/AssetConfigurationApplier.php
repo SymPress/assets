@@ -12,25 +12,23 @@ use SymPress\Assets\Performance\ResourceHintAwareAsset;
 final readonly class AssetConfigurationApplier
 {
     private const array COMMON_PROPERTIES_TO_METHOD = [
-        'filePath' => 'withFilePath',
-        'version' => 'withVersion',
-        'location' => 'forLocation',
-        'enqueue' => 'canEnqueue',
-        'handler' => 'useHandler',
-        'condition' => 'withCondition',
+        'filePath'   => 'withFilePath',
+        'version'    => 'withVersion',
+        'location'   => 'forLocation',
+        'enqueue'    => 'canEnqueue',
+        'handler'    => 'useHandler',
+        'condition'  => 'withCondition',
         'attributes' => 'withAttributes',
     ];
 
     private const array STYLE_PROPERTIES_TO_METHOD = [
-        'media' => 'forMedia',
+        'media'        => 'forMedia',
         'inlineStyles' => 'withInlineStyles',
-        'loading' => 'withLoadingMode',
-        'loadingMode' => 'withLoadingMode',
+        'loading'      => 'withLoadingMode',
+        'loadingMode'  => 'withLoadingMode',
     ];
 
-    /**
-     * @param array<string, mixed> $config
-     */
+    /** @param array<string, mixed> $config */
     #[\NoDiscard]
     public function apply(Asset $asset, array $config): Asset
     {
@@ -62,7 +60,7 @@ final readonly class AssetConfigurationApplier
             return;
         }
 
-        if (null === $config) {
+        if ($config === null) {
             return;
         }
 
@@ -72,13 +70,13 @@ final readonly class AssetConfigurationApplier
             return;
         }
 
-        if (true === $config) {
+        if ($config === true) {
             $asset->excludeFromCacheOptimization();
 
             return;
         }
 
-        if (false === $config) {
+        if ($config === false) {
             $asset->allowCacheOptimization();
 
             return;
@@ -89,9 +87,7 @@ final readonly class AssetConfigurationApplier
         );
     }
 
-    /**
-     * @param array<string, mixed> $config
-     */
+    /** @param array<string, mixed> $config */
     private function applyDependencyExtractionConfig(DependencyExtractionAwareAsset $asset, array $config): void
     {
         if (array_key_exists('dependencyExtractionEnabled', $config) && !is_bool($config['dependencyExtractionEnabled'])) {
@@ -111,7 +107,7 @@ final readonly class AssetConfigurationApplier
         }
 
         $sizeLimit = $config['dependencyFileSizeLimit'] ?? null;
-        if (null === $sizeLimit) {
+        if ($sizeLimit === null) {
             return;
         }
 
@@ -122,9 +118,7 @@ final readonly class AssetConfigurationApplier
         $asset->withDependencyFileSizeLimit($sizeLimit);
     }
 
-    /**
-     * @param array<string, mixed> $config
-     */
+    /** @param array<string, mixed> $config */
     private function applyScriptConfig(Script $asset, array $config): void
     {
         $localize = $config['localize'] ?? [];
@@ -153,13 +147,11 @@ final readonly class AssetConfigurationApplier
         $this->applyInlineScripts($asset, $inline['after'] ?? [], 'appendInlineScript');
     }
 
-    /**
-     * @param array<string, mixed> $config
-     */
+    /** @param array<string, mixed> $config */
     private function applyScriptLoadingStrategy(Script $asset, array $config): void
     {
         $strategy = $config['loadingStrategy'] ?? $config['strategy'] ?? null;
-        if (null === $strategy) {
+        if ($strategy === null) {
             return;
         }
 
@@ -170,9 +162,7 @@ final readonly class AssetConfigurationApplier
         $asset->withLoadingStrategy((string) $strategy);
     }
 
-    /**
-     * @param array<mixed> $localize
-     */
+    /** @param array<mixed> $localize */
     private function applyLocalizeConfig(Script $asset, array $localize): void
     {
         foreach ($localize as $objectName => $data) {
@@ -188,9 +178,6 @@ final readonly class AssetConfigurationApplier
         }
     }
 
-    /**
-     * @param array{domain?: string, path?: string|null}|mixed $translation
-     */
     private function applyTranslationConfig(Script $asset, mixed $translation): void
     {
         if (!is_array($translation) || !isset($translation['domain'])) {
@@ -207,9 +194,7 @@ final readonly class AssetConfigurationApplier
         $asset->withTranslation((string) $domain, is_string($path) ? $path : null);
     }
 
-    /**
-     * @param 'appendInlineScript'|'prependInlineScript' $method
-     */
+    /** @param 'appendInlineScript'|'prependInlineScript' $method */
     private function applyInlineScripts(Script $asset, mixed $scripts, string $method): void
     {
         if (!is_array($scripts)) {
@@ -256,14 +241,15 @@ final readonly class AssetConfigurationApplier
             return;
         }
 
-        if (is_scalar($dependencies)) {
-            $asset->withDependencies((string) $dependencies);
+        if (!is_scalar($dependencies)) {
+            return;
         }
+
+        $asset->withDependencies((string) $dependencies);
     }
 
     /**
      * @param array<mixed> $dependencies
-     *
      * @return list<string>
      */
     private function normalizeDependencies(array $dependencies): array
@@ -283,7 +269,7 @@ final readonly class AssetConfigurationApplier
 
     private function applyResourceHintsConfig(Asset $asset, mixed $config): void
     {
-        if (!$asset instanceof ResourceHintAwareAsset || null === $config) {
+        if (!$asset instanceof ResourceHintAwareAsset || $config === null) {
             return;
         }
 
@@ -306,9 +292,7 @@ final readonly class AssetConfigurationApplier
         }
     }
 
-    /**
-     * @param array<string, mixed> $config
-     */
+    /** @param array<string, mixed> $config */
     private function applyResourceHintConfig(ResourceHintAwareAsset&Asset $asset, array $config): void
     {
         $relation = $config['relation'] ?? $config['rel'] ?? null;
@@ -322,7 +306,7 @@ final readonly class AssetConfigurationApplier
         }
 
         $attributes = $this->resourceHintAttributes($config);
-        if (ResourceHint::PRELOAD === (string) $relation && !isset($attributes['as'])) {
+        if ((string) $relation === ResourceHint::PRELOAD && !isset($attributes['as'])) {
             throw new Exception\InvalidArgumentException('Preload resource hints require an <code>as</code> attribute.');
         }
 
@@ -331,7 +315,6 @@ final readonly class AssetConfigurationApplier
 
     /**
      * @param array<string, mixed> $config
-     *
      * @return array<string, string|bool|int|float|null>
      */
     private function resourceHintAttributes(array $config): array
@@ -353,7 +336,7 @@ final readonly class AssetConfigurationApplier
 
         return array_filter(
             $attributes,
-            static fn (mixed $value): bool => null === $value || is_scalar($value),
+            static fn (mixed $value): bool => $value === null || is_scalar($value),
         );
     }
 }
