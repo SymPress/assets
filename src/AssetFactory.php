@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace SymPress\Assets;
 
+use SymPress\Assets\CacheOptimization\CacheOptimizationExclusion;
 use SymPress\Assets\Exception\InvalidArgumentException;
 use SymPress\Assets\Loader\ArrayLoader;
 use SymPress\Assets\Loader\PhpFileLoader;
+use SymPress\Assets\Performance\ResourceHint;
 
 /**
- * Class AssetFactory.
+ *
  *
  * phpcs:disable Generic.Files.LineLength.TooLong
  *
@@ -27,8 +29,8 @@ use SymPress\Assets\Loader\PhpFileLoader;
  *     location?: AssetLocation,
  *     condition?: string,
      *     attributes?: array<string, string|bool>,
-     *     cacheOptimization?: bool|\SymPress\Assets\CacheOptimization\CacheOptimizationExclusion|null,
-     *     resourceHints?: array<int, \SymPress\Assets\Performance\ResourceHint|array<string, mixed>>,
+     *     cacheOptimization?: bool|CacheOptimizationExclusion|null,
+     *     resourceHints?: array<int, ResourceHint|array<string, mixed>>,
      *     dependencyExtractionEnabled?: bool,
      *     phpDependencyFiles?: bool,
      *     dependencyFileSizeLimit?: positive-int,
@@ -44,8 +46,6 @@ use SymPress\Assets\Loader\PhpFileLoader;
      *     loadingMode?: string,
      *     inlineStyles?: string,
      * }
- *
- * phpcs:enable Generic.Files.LineLength.TooLong
  */
 final class AssetFactory
 {
@@ -57,7 +57,6 @@ final class AssetFactory
 
     /**
      * @param array<string, mixed> $config
-     *
      * @throws Exception\MissingArgumentException
      * @throws InvalidArgumentException
      */
@@ -86,9 +85,7 @@ final class AssetFactory
         return self::configureAsset($asset, $config);
     }
 
-    /**
-     * @param array<string, mixed> $config
-     */
+    /** @param array<string, mixed> $config */
     #[\NoDiscard]
     public static function configureAsset(Asset $asset, array $config): Asset
     {
@@ -97,9 +94,7 @@ final class AssetFactory
 
     /**
      * @param array<string, mixed> $config
-     *
      * @return AssetConfig&AssetExtensionConfig
-     *
      * @throws Exception\MissingArgumentException
      */
     private static function validateConfig(array $config): array
@@ -118,7 +113,6 @@ final class AssetFactory
 
     /**
      * @phpstan-assert-if-true AssetConfig&AssetExtensionConfig $config
-     *
      * @param array<string, mixed> $config
      */
     private static function isValidatedConfig(array $config): bool
@@ -132,9 +126,7 @@ final class AssetFactory
             && is_a($type, Asset::class, true);
     }
 
-    /**
-     * @param array<string, mixed> $config
-     */
+    /** @param array<string, mixed> $config */
     private static function ensureRequiredConfigFields(array $config): void
     {
         foreach (self::REQUIRED_CONFIG_FIELDS as $key) {
@@ -146,7 +138,6 @@ final class AssetFactory
 
     /**
      * @param array<string, mixed> $config
-     *
      * @return array<string, mixed>
      */
     private static function normalizeVersionConfig(array $config): array
@@ -162,7 +153,6 @@ final class AssetFactory
 
     /**
      * @param array<string, mixed> $config
-     *
      * @return array<string, mixed>
      */
     private static function normalizeTranslationConfig(array $config): array
@@ -175,7 +165,7 @@ final class AssetFactory
             // backward compatibility
             $config['translation'] = [
                 'domain' => $config['translation'],
-                'path' => null,
+                'path'   => null,
             ];
 
             return $config;
@@ -198,7 +188,6 @@ final class AssetFactory
 
     /**
      * @param array<string, mixed> $config
-     *
      * @return array<string, mixed>
      */
     private static function normalizeLocalizeConfig(array $config): array
@@ -219,10 +208,8 @@ final class AssetFactory
     }
 
     /**
-     * @return Asset[]
-     *
+     * @return array<Asset>
      * @throws Exception\FileNotFoundException
-     *
      * @deprecated PhpArrayFileLoader::load(string $filePath)
      */
     #[\NoDiscard]
@@ -233,11 +220,8 @@ final class AssetFactory
 
     /**
      * @param array<mixed> $data
-     *
-     * @return Asset[]
-     *
+     * @return array<Asset>
      * @throws Exception\FileNotFoundException
-     *
      * @deprecated ArrayLoader::load(array $data)
      */
     #[\NoDiscard]
