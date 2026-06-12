@@ -15,9 +15,7 @@ use SymPress\Assets\Handler\StyleHandler;
 use SymPress\Assets\Performance\ResourceHintHandler;
 use SymPress\Assets\Util\AssetHookResolver;
 
-/**
- * @phpstan-import-type AssetExtensionConfig from AssetFactory
- */
+/** @phpstan-import-type AssetExtensionConfig from AssetFactory */
 final class AssetManager
 {
     public const string ACTION_SETUP = 'sympress.assets.setup';
@@ -38,16 +36,12 @@ final class AssetManager
      */
     private array $extensions = [];
 
-    /**
-     * @var array<string, bool>
-     */
+    /** @var array<string, bool> */
     private array $processedAssets = [];
 
     private AssetCollection $assets;
 
-    /**
-     * @var array<AssetHandler>
-     */
+    /** @var array<AssetHandler> */
     private array $handlers = [];
 
     private AssetHookResolver $hookResolver;
@@ -60,9 +54,7 @@ final class AssetManager
 
     private ResourceHintHandler $resourceHintHandler;
 
-    /**
-     * @var array<string, list<Asset>>
-     */
+    /** @var array<string, list<Asset>> */
     private array $assetsByHook = [];
 
     private bool $assetIndexDirty = true;
@@ -73,6 +65,7 @@ final class AssetManager
         ?CacheOptimizationHandler $cacheOptimizationHandler = null,
         ?ResourceHintHandler $resourceHintHandler = null,
     ) {
+
         $this->hookResolver = $hookResolver ?? new AssetHookResolver();
         $this->extensionMerger = $extensionMerger ?? new AssetExtensionMerger();
         $this->cacheOptimizationHandler = $cacheOptimizationHandler ?? new CacheOptimizationHandler();
@@ -96,9 +89,7 @@ final class AssetManager
         return $this;
     }
 
-    /**
-     * @return array<AssetHandler>
-     */
+    /** @return array<AssetHandler> */
     public function handlers(): array
     {
         return $this->handlers;
@@ -115,9 +106,7 @@ final class AssetManager
         return $this;
     }
 
-    /**
-     * @return array<class-string, array<string, Asset>>
-     */
+    /** @return array<class-string, array<string, Asset>> */
     public function assets(): array
     {
         $this->ensureSetup();
@@ -134,7 +123,7 @@ final class AssetManager
     {
         $this->ensureSetup();
 
-        if (null === $type) {
+        if ($type === null) {
             return $this->assets->getFirst($handle);
         }
 
@@ -144,7 +133,6 @@ final class AssetManager
     /**
      * @param class-string         $type
      * @param array<string, mixed> $extensions
-     *
      * @return $this
      */
     public function extendAsset(string $handle, string $type, array $extensions): static
@@ -157,7 +145,7 @@ final class AssetManager
         // In case, the asset is already registered,
         // but not yet processed, extend it.
         $asset = $this->assets->get($handle, $type);
-        if (null !== $asset && !$this->isAssetProcessed($asset)) {
+        if ($asset !== null && !$this->isAssetProcessed($asset)) {
             $this->extendAndRegisterAsset($asset);
         }
 
@@ -166,7 +154,6 @@ final class AssetManager
 
     /**
      * @param class-string $type
-     *
      * @return array<string, mixed>
      */
     public function assetExtensions(string $handle, string $type): array
@@ -201,7 +188,7 @@ final class AssetManager
                     continue;
                 }
 
-                if (null !== $assetFilter && !$assetFilter($asset)) {
+                if ($assetFilter !== null && !$assetFilter($asset)) {
                     continue;
                 }
 
@@ -212,13 +199,11 @@ final class AssetManager
         return $this->registerCacheOptimizationExclusions();
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     private function extendAndRegisterAsset(Asset $asset): static
     {
         $handle = $asset->handle();
-        $type = get_class($asset);
+        $type = $asset::class;
         $extensions = $this->assetExtensions($handle, $type);
         if (count($extensions) > 0 && !$this->isAssetProcessed($asset)) {
             $asset = AssetFactory::configureAsset($asset, $extensions);
@@ -254,7 +239,7 @@ final class AssetManager
 
             add_action(
                 $hook,
-                function () use ($hook) {
+                function () use ($hook): void {
                     $this->processAssets($hook);
                 },
             );
@@ -278,9 +263,7 @@ final class AssetManager
         $this->loopCurrentHookAssets($currentHook, true);
     }
 
-    /**
-     * @return array<Asset>
-     */
+    /** @return array<Asset> */
     private function loopCurrentHookAssets(string $currentHook, bool $process): array
     {
         $this->ensureSetup();
@@ -337,7 +320,7 @@ final class AssetManager
         /*
          * We should not setup if there's no asset hook or the last hook already fired.
          */
-        if (null === $lastHook || (did_action($lastHook) && !doing_action($lastHook))) {
+        if ($lastHook === null || (did_action($lastHook) && !doing_action($lastHook))) {
             return;
         }
 
@@ -351,12 +334,10 @@ final class AssetManager
 
     private function assetKey(Asset $asset): string
     {
-        return get_class($asset) . '_' . $asset->handle();
+        return $asset::class . '_' . $asset->handle();
     }
 
-    /**
-     * @return list<Asset>
-     */
+    /** @return list<Asset> */
     private function assetsForHook(string $hook): array
     {
         if ($this->assetIndexDirty) {
@@ -374,9 +355,11 @@ final class AssetManager
             foreach ($this->assets->all() as $assets) {
                 foreach ($assets as $asset) {
                     $location = $asset->location();
-                    if (($location & $locationId) === $locationId) {
-                        $this->assetsByHook[$hook][] = $asset;
+                    if (!(($location & $locationId) === $locationId)) {
+                        continue;
                     }
+
+                    $this->assetsByHook[$hook][] = $asset;
                 }
             }
         }
