@@ -15,8 +15,8 @@ class AsyncStyleOutputFilter implements AssetOutputFilter
         $attributes = [
             ...$this->linkAttributes($html, $asset),
             ...$asset->attributes(),
-            'rel' => 'preload',
-            'as' => 'style',
+            'rel'    => 'preload',
+            'as'     => 'style',
             'onload' => self::LOAD_STYLESHEET_ON_LOAD,
         ];
 
@@ -29,9 +29,7 @@ class AsyncStyleOutputFilter implements AssetOutputFilter
         );
     }
 
-    /**
-     * @return array<string, string|true>
-     */
+    /** @return array<string, string|true> */
     private function linkAttributes(string $html, FilterAwareAsset $asset): array
     {
         $attributes = $this->parseAttributes($html);
@@ -53,23 +51,23 @@ class AsyncStyleOutputFilter implements AssetOutputFilter
             : $url;
     }
 
-    /**
-     * @return array<string, string|true>
-     */
+    /** @return array<string, string|true> */
     private function parseAttributes(string $html): array
     {
-        if (1 !== preg_match('/<link\b(?<attributes>[^>]*)>/i', $html, $tag)) {
+        if (preg_match('/<link\b(?<attributes>[^>]*)>/i', $html, $tag) !== 1) {
             return [];
         }
 
         $attributes = [];
 
-        if (preg_match_all(
-            '/\s(?<name>[A-Za-z_:][A-Za-z0-9:_.-]*)\s*=\s*(["\'])(?<value>.*?)\2/s',
-            (string) $tag['attributes'],
-            $matches,
-            PREG_SET_ORDER,
-        )) {
+        if (
+            preg_match_all(
+                '/\s(?<name>[A-Za-z_:][A-Za-z0-9:_.-]*)\s*=\s*(["\'])(?<value>.*?)\2/s',
+                (string) $tag['attributes'],
+                $matches,
+                PREG_SET_ORDER,
+            )
+        ) {
             foreach ($matches as $match) {
                 $attributes[(string) $match['name']] = html_entity_decode(
                     (string) $match['value'],
@@ -79,12 +77,14 @@ class AsyncStyleOutputFilter implements AssetOutputFilter
             }
         }
 
-        if (preg_match_all(
-            '/\s(?<name>[A-Za-z_:][A-Za-z0-9:_.-]*)(?=\s|$)/',
-            preg_replace('/\s[A-Za-z_:][A-Za-z0-9:_.-]*\s*=\s*(["\']).*?\1/s', '', (string) $tag['attributes']) ?? '',
-            $matches,
-            PREG_SET_ORDER,
-        )) {
+        if (
+            preg_match_all(
+                '/\s(?<name>[A-Za-z_:][A-Za-z0-9:_.-]*)(?=\s|$)/',
+                preg_replace('/\s[A-Za-z_:][A-Za-z0-9:_.-]*\s*=\s*(["\']).*?\1/s', '', (string) $tag['attributes']) ?? '',
+                $matches,
+                PREG_SET_ORDER,
+            )
+        ) {
             foreach ($matches as $match) {
                 $attributes[(string) $match['name']] ??= true;
             }

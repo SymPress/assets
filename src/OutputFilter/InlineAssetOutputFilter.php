@@ -13,9 +13,7 @@ final class InlineAssetOutputFilter implements AssetOutputFilter
 {
     private readonly InlineAssetPolicy $policy;
 
-    /**
-     * @var array<string, string|null>
-     */
+    /** @var array<string, string|null> */
     private array $contentsByFile = [];
 
     public function __construct(?InlineAssetPolicy $policy = null)
@@ -23,14 +21,12 @@ final class InlineAssetOutputFilter implements AssetOutputFilter
         $this->policy = $policy ?? InlineAssetPolicy::fromWordPressEnvironment();
     }
 
-    /**
-     * @psalm-suppress PossiblyNullArgument
-     */
+    /** @psalm-suppress PossiblyNullArgument */
     public function __invoke(string $html, FilterAwareAsset $asset): string
     {
         $filePath = $asset->filePath();
 
-        if ('' === $filePath) {
+        if ($filePath === '') {
             return $html;
         }
 
@@ -39,7 +35,7 @@ final class InlineAssetOutputFilter implements AssetOutputFilter
         }
 
         $content = $this->fileContent($filePath);
-        if (null === $content) {
+        if ($content === null) {
             return $html;
         }
 
@@ -65,27 +61,25 @@ final class InlineAssetOutputFilter implements AssetOutputFilter
     private function fileContent(string $filePath): ?string
     {
         $modifiedAt = @filemtime($filePath);
-        $cacheKey = sprintf('%s:%s', $filePath, false === $modifiedAt ? 'unknown' : (string) $modifiedAt);
+        $cacheKey = sprintf('%s:%s', $filePath, $modifiedAt === false ? 'unknown' : (string) $modifiedAt);
         if (array_key_exists($cacheKey, $this->contentsByFile)) {
             return $this->contentsByFile[$cacheKey];
         }
 
         $content = file_get_contents($filePath);
-        $this->contentsByFile[$cacheKey] = false === $content ? null : $content;
+        $this->contentsByFile[$cacheKey] = $content === false ? null : $content;
 
         return $this->contentsByFile[$cacheKey];
     }
 
-    /**
-     * @param list<string> $excludedAttributes
-     */
+    /** @param list<string> $excludedAttributes */
     private function attributes(FilterAwareAsset $asset, array $excludedAttributes): string
     {
         return HtmlAttributes::render(
             [
                 ...$asset->attributes(),
                 'data-version' => (string) $asset->version(),
-                'data-id' => $asset->handle(),
+                'data-id'      => $asset->handle(),
             ],
             $excludedAttributes,
         );

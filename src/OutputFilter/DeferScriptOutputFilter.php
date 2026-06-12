@@ -6,9 +6,7 @@ namespace SymPress\Assets\OutputFilter;
 
 use SymPress\Assets\FilterAwareAsset;
 
-/**
- * @deprecated use \SymPress\Assets\Script::defer().
- */
+/** @deprecated use \SymPress\Assets\Script::defer(). */
 class DeferScriptOutputFilter implements AssetOutputFilter
 {
     public function __invoke(string $html, FilterAwareAsset $asset): string

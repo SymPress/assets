@@ -18,7 +18,7 @@ final readonly class HtmlAttributes
             $html .= sprintf(
                 ' %s="%s"',
                 esc_attr($key),
-                esc_attr(true === $value ? $key : $value),
+                esc_attr($value === true ? $key : $value),
             );
         }
 
@@ -34,19 +34,19 @@ final readonly class HtmlAttributes
         array $attributes,
         array $excludedAttributes = [],
     ): void {
+
         foreach (self::normalize($attributes, $excludedAttributes) as $key => $value) {
-            if (null !== $tag->get_attribute($key)) {
+            if ($tag->get_attribute($key) !== null) {
                 continue;
             }
 
-            $tag->set_attribute($key, true === $value ? $key : $value);
+            $tag->set_attribute($key, $value === true ? $key : $value);
         }
     }
 
     /**
      * @param array<string, mixed> $attributes
      * @param list<string>         $excludedAttributes
-     *
      * @return array<string, string|true>
      */
     public static function normalize(array $attributes, array $excludedAttributes = []): array
@@ -62,18 +62,20 @@ final readonly class HtmlAttributes
                 continue;
             }
 
-            if (false === $value || null === $value) {
+            if ($value === false || $value === null) {
                 continue;
             }
 
-            if (true === $value) {
+            if ($value === true) {
                 $normalized[$key] = true;
                 continue;
             }
 
-            if (is_scalar($value) || $value instanceof \Stringable) {
-                $normalized[$key] = (string) $value;
+            if (!is_scalar($value) && !($value instanceof \Stringable)) {
+                continue;
             }
+
+            $normalized[$key] = (string) $value;
         }
 
         return $normalized;
@@ -81,6 +83,6 @@ final readonly class HtmlAttributes
 
     private static function validAttributeName(string $name): bool
     {
-        return 1 === preg_match('/^[A-Za-z_:][A-Za-z0-9:_.-]*$/', $name);
+        return preg_match('/^[A-Za-z_:][A-Za-z0-9:_.-]*$/', $name) === 1;
     }
 }

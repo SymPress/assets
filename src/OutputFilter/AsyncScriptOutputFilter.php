@@ -6,9 +6,7 @@ namespace SymPress\Assets\OutputFilter;
 
 use SymPress\Assets\FilterAwareAsset;
 
-/**
- * @deprecated use \SymPress\Assets\Script::async().
- */
+/** @deprecated use \SymPress\Assets\Script::async(). */
 class AsyncScriptOutputFilter implements AssetOutputFilter
 {
     public function __invoke(string $html, FilterAwareAsset $asset): string

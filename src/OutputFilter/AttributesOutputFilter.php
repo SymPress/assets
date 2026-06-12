@@ -12,7 +12,7 @@ class AttributesOutputFilter implements AssetOutputFilter
     {
         $attributes = $asset->attributes();
 
-        if (!class_exists(\WP_HTML_Tag_Processor::class) || 0 === count($attributes)) {
+        if (!class_exists(\WP_HTML_Tag_Processor::class) || count($attributes) === 0) {
             return $html;
         }
 
