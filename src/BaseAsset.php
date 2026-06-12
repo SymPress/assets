@@ -17,8 +17,6 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
     use ConfigureAutodiscoverVersionTrait;
     use ResourceHintAwareTrait;
 
-    protected string $url = '';
-
     private bool $filePathResolved = false;
 
     /**
@@ -28,12 +26,10 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
      */
     protected string $filePath = '';
 
-    protected string $handle = '';
-
     /**
      * Dependencies to other Asset handles.
      *
-     * @var string[]
+     * @var array<string>
      */
     protected array $dependencies = [];
 
@@ -49,23 +45,18 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
      */
     protected ?string $version = null;
 
-    /**
-     * @var bool|callable(): bool
-     */
+    /** @var bool|callable(): bool */
     protected $enqueue = true;
 
-    /**
-     * @var class-string<AssetHandler>|null
-     */
+    /** @var class-string<AssetHandler>|null */
     protected $handler;
 
     public function __construct(
-        string $handle,
-        string $url,
+        protected string $handle = '',
+        protected string $url = '',
         int $location = Asset::FRONTEND | Asset::ACTIVATE,
     ) {
-        $this->handle = $handle;
-        $this->url = $url;
+
         $this->location = $location;
     }
 
@@ -83,7 +74,7 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
     {
         $filePath = $this->filePath;
 
-        if ('' !== $filePath) {
+        if ($filePath !== '') {
             return $filePath;
         }
 
@@ -100,7 +91,7 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
         }
 
         // if replacement fails, don't set the url as path.
-        if (null === $filePath || !file_exists($filePath)) {
+        if ($filePath === null || !file_exists($filePath)) {
             return '';
         }
 
@@ -124,10 +115,10 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
     {
         $version = $this->version;
 
-        if (null === $version && $this->autodiscoverVersion) {
+        if ($version === null && $this->autodiscoverVersion) {
             $filePath = $this->filePath();
 
-            if ('' === $filePath || !is_file($filePath)) {
+            if ($filePath === '' || !is_file($filePath)) {
                 return null;
             }
 
@@ -137,7 +128,7 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
             return $version;
         }
 
-        return null === $version
+        return $version === null
             ? null
             : (string) $version;
     }
@@ -149,9 +140,7 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
         return $this;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return array<string> */
     public function dependencies(): array
     {
         return array_values(array_unique($this->dependencies));
@@ -191,7 +180,6 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
 
     /**
      * @param bool|callable(): bool $enqueue
-     *
      * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function canEnqueue($enqueue): static
@@ -201,9 +189,7 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
         return $this;
     }
 
-    /**
-     * @param class-string<AssetHandler> $handler
-     */
+    /** @param class-string<AssetHandler> $handler */
     public function useHandler(string $handler): static
     {
         $this->handler = $handler;
@@ -211,9 +197,7 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
         return $this;
     }
 
-    /**
-     * @return class-string<AssetHandler>
-     */
+    /** @return class-string<AssetHandler> */
     public function handler(): string
     {
         if (!$this->handler) {
@@ -223,8 +207,6 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
         return $this->handler;
     }
 
-    /**
-     * @return class-string<AssetHandler> className of the default handler
-     */
+    /** @return class-string<AssetHandler> className of the default handler */
     abstract protected function defaultHandler(): string;
 }
