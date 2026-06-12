@@ -4,30 +4,24 @@ declare(strict_types=1);
 
 namespace SymPress\Assets;
 
-/**
- * @phpstan-type Assets array<class-string<Asset>, array<string, Asset>>
- */
+/** @phpstan-type Assets array<class-string<Asset>, array<string, Asset>> */
 class AssetCollection
 {
-    /**
-     * @var Assets
-     */
+    /** @var Assets */
     protected array $assets = [];
 
     public function add(Asset $asset): void
     {
-        $type = get_class($asset);
+        $type = $asset::class;
         $handle = $asset->handle();
         $this->assets[$type][$handle] = $asset;
     }
 
-    /**
-     * @param class-string $type
-     */
+    /** @param class-string $type */
     public function get(string $handle, string $type): ?Asset
     {
         $asset = $this->assets[$type][$handle] ?? null;
-        if (null !== $asset && is_a($asset, $type)) {
+        if ($asset !== null && is_a($asset, $type)) {
             return $asset;
         }
 
@@ -60,17 +54,13 @@ class AssetCollection
         return $found;
     }
 
-    /**
-     * @param class-string $type
-     */
+    /** @param class-string $type */
     public function has(string $handle, string $type): bool
     {
-        return null !== $this->get($handle, $type);
+        return $this->get($handle, $type) !== null;
     }
 
-    /**
-     * @return Assets
-     */
+    /** @return Assets */
     public function all(): array
     {
         return $this->assets;
