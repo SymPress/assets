@@ -11,13 +11,11 @@ class PhpFileLoader extends ArrayLoader
 {
     /**
      * @param mixed $resource the path to your php-file
-     *
-     * @return Asset[]
-     *
+     * @return array<Asset>
      * @psalm-suppress UnresolvableInclude
      */
-    #[\Override]
     #[\NoDiscard]
+    #[\Override]
     public function load(mixed $resource): array
     {
         if (!is_string($resource) || !is_readable($resource)) {

@@ -17,18 +17,18 @@ abstract class AbstractWebpackLoader implements LoaderInterface
     use ConfigureAutodiscoverVersionTrait;
 
     private const array EXTENSIONS_TO_CLASS = [
-        'css' => Style::class,
-        'js' => Script::class,
-        'mjs' => ScriptModule::class,
+        'css'       => Style::class,
+        'js'        => Script::class,
+        'mjs'       => ScriptModule::class,
         'module.js' => ScriptModule::class,
     ];
 
     private const array LOCATION_BY_FILENAME_MARKER = [
-        '-backend' => Asset::BACKEND,
-        '-block' => Asset::BLOCK_EDITOR_ASSETS,
-        '-login' => Asset::LOGIN,
+        '-backend'            => Asset::BACKEND,
+        '-block'              => Asset::BLOCK_EDITOR_ASSETS,
+        '-login'              => Asset::LOGIN,
         '-customizer-preview' => Asset::CUSTOMIZER_PREVIEW,
-        '-customizer' => Asset::CUSTOMIZER,
+        '-customizer'         => Asset::CUSTOMIZER,
     ];
 
     protected string $directoryUrl = '';
@@ -40,9 +40,7 @@ abstract class AbstractWebpackLoader implements LoaderInterface
         $this->jsonFileReader = $jsonFileReader ?? new JsonFileReader();
     }
 
-    /**
-     * @param string $directoryUrl optional directory URL which will be used for the Asset
-     */
+    /** @param string $directoryUrl optional directory URL which will be used for the Asset */
     public function withDirectoryUrl(string $directoryUrl): static
     {
         $this->directoryUrl = $directoryUrl;
@@ -52,18 +50,16 @@ abstract class AbstractWebpackLoader implements LoaderInterface
 
     /**
      * @param array<string, mixed> $data
-     *
-     * @return Asset[]
+     * @return array<Asset>
      */
     abstract protected function parseData(array $data, string $resource): array;
 
     /**
-     * @return Asset[]
-     *
+     * @return array<Asset>
      * @psalm-suppress MixedArgument
      */
-    #[\Override]
     #[\NoDiscard]
+    #[\Override]
     public function load(mixed $resource): array
     {
         $resource = $this->jsonFileReader->readableFile($resource);
@@ -93,9 +89,7 @@ abstract class AbstractWebpackLoader implements LoaderInterface
         return $asset;
     }
 
-    /**
-     * @return class-string<Style|Script|ScriptModule>|null
-     */
+    /** @return class-string<Style|Script|ScriptModule>|null */
     protected function resolveClassByExtension(string $filePath): ?string
     {
         $extension = self::isModule(basename($filePath))
@@ -141,7 +135,7 @@ abstract class AbstractWebpackLoader implements LoaderInterface
         $vendor = explode('@', Path::getDirectory($file), 2)[1] ?? null;
         $handle = Path::getFilenameWithoutExtension($file);
 
-        if (null !== $vendor) {
+        if ($vendor !== null) {
             $handle = "@{$vendor}/{$handle}";
         }
 

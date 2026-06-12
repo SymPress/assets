@@ -8,9 +8,7 @@ use SymPress\Assets\Asset;
 
 interface LoaderInterface
 {
-    /**
-     * @return Asset[]
-     */
+    /** @return array<Asset> */
     #[\NoDiscard]
     public function load(mixed $resource): array;
 }

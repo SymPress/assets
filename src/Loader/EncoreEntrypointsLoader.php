@@ -19,7 +19,7 @@ class EncoreEntrypointsLoader extends AbstractWebpackLoader implements LoaderInt
     protected function parseData(array $data, string $resource): array
     {
         $directory = Path::getDirectory($resource);
-        /** @var array{entrypoints:array{css?:string[], js?:string[]}} $data */
+        /** @var array{entrypoints:array{css?:array<string>, js?:array<string>}} $data */
         $data = $data['entrypoints'] ?? [];
 
         $assets = [];
@@ -35,9 +35,8 @@ class EncoreEntrypointsLoader extends AbstractWebpackLoader implements LoaderInt
     }
 
     /**
-     * @param string[] $files
-     *
-     * @return Asset[]
+     * @param array<string> $files
+     * @return array<Asset>
      */
     protected function extractAssets(string $handle, array $files, string $directory): array
     {
@@ -50,7 +49,7 @@ class EncoreEntrypointsLoader extends AbstractWebpackLoader implements LoaderInt
 
             $sanitizedFile = $this->sanitizeFileName($file);
 
-            $fileUrl = (!$this->directoryUrl)
+            $fileUrl = !$this->directoryUrl
                 ? $file
                 : $this->directoryUrl . $sanitizedFile;
 
@@ -58,9 +57,11 @@ class EncoreEntrypointsLoader extends AbstractWebpackLoader implements LoaderInt
 
             $asset = $this->buildAsset($assetHandle, $fileUrl, $filePath);
 
-            if (null !== $asset) {
-                $assets[] = $asset;
+            if ($asset === null) {
+                continue;
             }
+
+            $assets[] = $asset;
         }
 
         foreach ($assets as $i => $asset) {

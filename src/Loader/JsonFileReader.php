@@ -11,7 +11,6 @@ final readonly class JsonFileReader
 {
     /**
      * @return array<string, mixed>
-     *
      * @throws FileNotFoundException
      * @throws InvalidResourceException
      */
@@ -22,7 +21,7 @@ final readonly class JsonFileReader
 
         $contents = file_get_contents($resource);
 
-        if (false === $contents) {
+        if ($contents === false) {
             throw new FileNotFoundException(
                 sprintf('The given file "%s" does not exist or is not readable.', esc_html($resource)),
             );
@@ -43,17 +42,17 @@ final readonly class JsonFileReader
 
         $normalized = [];
         foreach ($data as $key => $value) {
-            if (is_string($key)) {
-                $normalized[$key] = $value;
+            if (!is_string($key)) {
+                continue;
             }
+
+            $normalized[$key] = $value;
         }
 
         return $normalized;
     }
 
-    /**
-     * @throws FileNotFoundException
-     */
+    /** @throws FileNotFoundException */
     #[\NoDiscard]
     public function readableFile(mixed $resource): string
     {

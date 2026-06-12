@@ -9,27 +9,26 @@ use SymPress\Assets\AssetFactory;
 use SymPress\Assets\BaseAsset;
 use SymPress\Assets\ConfigureAutodiscoverVersionTrait;
 
-/**
- * @phpstan-import-type AssetConfig from AssetFactory
- */
+/** @phpstan-import-type AssetConfig from AssetFactory */
 class ArrayLoader implements LoaderInterface
 {
     use ConfigureAutodiscoverVersionTrait;
 
     /**
-     * @return Asset[]
-     *
+     * @return array<Asset>
      * @psalm-suppress MixedArgument
      */
-    #[\Override]
     #[\NoDiscard]
+    #[\Override]
     public function load(mixed $resource): array
     {
         $assets = [];
         foreach ((array) $resource as $config) {
-            if ($this->isAssetConfig($config)) {
-                $assets[] = AssetFactory::create($config);
+            if (!$this->isAssetConfig($config)) {
+                continue;
             }
+
+            $assets[] = AssetFactory::create($config);
         }
 
         return array_map(
@@ -46,9 +45,7 @@ class ArrayLoader implements LoaderInterface
         );
     }
 
-    /**
-     * @phpstan-assert-if-true AssetConfig $config
-     */
+    /** @phpstan-assert-if-true AssetConfig $config */
     private function isAssetConfig(mixed $config): bool
     {
         if (!is_array($config)) {

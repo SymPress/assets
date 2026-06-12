@@ -14,10 +14,8 @@ use Symfony\Component\Filesystem\Path;
  * Implementation of Webpack manifest.json parsing into Assets.
  *
  * @see https://www.npmjs.com/package/webpack-manifest-plugin
- *
  * @phpstan-import-type AssetConfig from AssetFactory
  * @phpstan-import-type AssetExtensionConfig from AssetFactory
- *
  * @phpstan-type Configuration = AssetConfig&AssetExtensionConfig
  */
 class WebpackManifestLoader extends AbstractWebpackLoader
@@ -27,7 +25,7 @@ class WebpackManifestLoader extends AbstractWebpackLoader
         $directory = Path::getDirectory($resource);
         $assets = [];
         foreach ($data as $handle => $fileOrArray) {
-            if ('' === $handle) {
+            if ($handle === '') {
                 continue;
             }
 
@@ -40,9 +38,11 @@ class WebpackManifestLoader extends AbstractWebpackLoader
                 $asset = $this->handleUsingFileName($handle, $fileOrArray, $directory);
             }
 
-            if ($asset) {
-                $assets[] = $asset;
+            if (!$asset) {
+                continue;
             }
+
+            $assets[] = $asset;
         }
 
         return $assets;
@@ -50,7 +50,6 @@ class WebpackManifestLoader extends AbstractWebpackLoader
 
     /**
      * @param array<mixed> $configuration
-     *
      * @return array<string, mixed>
      */
     private function normalizeConfiguration(array $configuration): array
@@ -58,9 +57,11 @@ class WebpackManifestLoader extends AbstractWebpackLoader
         $normalized = [];
 
         foreach ($configuration as $key => $value) {
-            if (is_string($key)) {
-                $normalized[$key] = $value;
+            if (!is_string($key)) {
+                continue;
             }
+
+            $normalized[$key] = $value;
         }
 
         return $normalized;
@@ -68,7 +69,6 @@ class WebpackManifestLoader extends AbstractWebpackLoader
 
     /**
      * @param array<string, mixed> $configuration
-     *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\MissingArgumentException
      */
@@ -96,15 +96,15 @@ class WebpackManifestLoader extends AbstractWebpackLoader
         $configuration['filePath'] = $this->filePath($sanitizedFile, $directory);
         $configuration['type'] = $class;
         $configuration['location'] = $location;
-        if (null !== $version) {
+        if ($version !== null) {
             $configuration['version'] = $version;
         } else {
             unset($configuration['version']);
         }
 
-        /* @var Configuration $configuration */
+        /** @var Configuration $configuration */
         $asset = AssetFactory::create($configuration);
-        if (null === $version && $asset instanceof BaseAsset) {
+        if ($version === null && $asset instanceof BaseAsset) {
             $this->autodiscoverVersion
                 ? $asset->enableAutodiscoverVersion()
                 : $asset->disableAutodiscoverVersion();
@@ -113,9 +113,7 @@ class WebpackManifestLoader extends AbstractWebpackLoader
         return $asset;
     }
 
-    /**
-     * @param array<string, mixed> $configuration
-     */
+    /** @param array<string, mixed> $configuration */
     protected function extractFilePath(array $configuration): ?string
     {
         $filePath = $configuration['filePath'] ?? null;
@@ -123,9 +121,7 @@ class WebpackManifestLoader extends AbstractWebpackLoader
         return is_string($filePath) ? $filePath : null;
     }
 
-    /**
-     * @param array<string, mixed> $configuration
-     */
+    /** @param array<string, mixed> $configuration */
     protected function extractVersion(array $configuration): ?string
     {
         $version = $configuration['version'] ?? null;
@@ -137,15 +133,13 @@ class WebpackManifestLoader extends AbstractWebpackLoader
         return (string) $version;
     }
 
-    /**
-     * @param array<string, mixed> $configuration
-     */
+    /** @param array<string, mixed> $configuration */
     protected function buildLocations(array $configuration): int
     {
         $locations = $configuration['location'] ?? null;
         $locations = is_array($locations) ? $locations : [];
 
-        if (0 === count($locations)) {
+        if (count($locations) === 0) {
             return Asset::FRONTEND;
         }
 
@@ -162,7 +156,7 @@ class WebpackManifestLoader extends AbstractWebpackLoader
             ),
         );
 
-        if (0 === count($locations)) {
+        if (count($locations) === 0) {
             return Asset::FRONTEND;
         }
 
@@ -189,7 +183,7 @@ class WebpackManifestLoader extends AbstractWebpackLoader
     {
         $sanitizedFile = $this->sanitizeFileName($file);
 
-        return (!$this->directoryUrl) ? $file : $this->directoryUrl . $sanitizedFile;
+        return !$this->directoryUrl ? $file : $this->directoryUrl . $sanitizedFile;
     }
 
     protected function filePath(string $file, string $directory): string
