@@ -11,23 +11,17 @@ interface FilterAwareAsset extends Asset
     /**
      * A list of assigned output filters to change the rendered tag.
      *
-     * @return callable[]|AssetOutputFilter[]|class-string<AssetOutputFilter>[]
+     * @return array<callable>|array<AssetOutputFilter>|array<class-string<AssetOutputFilter>>
      */
     public function filters(): array;
 
-    /**
-     * @param callable|class-string<AssetOutputFilter> ...$filters
-     */
+    /** @param callable|class-string<AssetOutputFilter> ...$filters */
     public function withFilters(...$filters): static;
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function attributes(): array;
 
-    /**
-     * @param array<string, mixed> $attributes
-     */
+    /** @param array<string, mixed> $attributes */
     public function withAttributes(array $attributes): static;
 
     public function withoutAttributes(string ...$attributes): static;
