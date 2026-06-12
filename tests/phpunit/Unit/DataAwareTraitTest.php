@@ -10,9 +10,7 @@ use SymPress\Assets\DataAwareTrait;
 
 class DataAwareTraitTest extends AbstractTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function testWithCondition(): void
     {
         $asset = $this->createDataAwareAsset();
@@ -24,9 +22,7 @@ class DataAwareTraitTest extends AbstractTestCase
         static::assertSame(['conditional' => $expected], $asset->data());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testWithData(): void
     {
         $asset = $this->createDataAwareAsset();
@@ -38,9 +34,7 @@ class DataAwareTraitTest extends AbstractTestCase
         static::assertSame($expectedData, $asset->data());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function testWithDataMerging(): void
     {
         $asset = $this->createDataAwareAsset();
@@ -57,12 +51,12 @@ class DataAwareTraitTest extends AbstractTestCase
 
     private function createDataAwareAsset(string $handle = '', string $src = ''): DataAwareAsset
     {
-        return new class($handle, $src) extends BaseAsset implements DataAwareAsset {
+        return new class ($handle, $src) extends BaseAsset implements DataAwareAsset {
             use DataAwareTrait;
 
             protected function defaultHandler(): string
             {
-                return __CLASS__;
+                return self::class;
             }
         };
     }

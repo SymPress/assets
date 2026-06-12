@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace SymPress\Assets\Tests\Unit\Bootstrap;
 
 use Brain\Monkey\Functions;
+use PHPUnit\Framework\Attributes\Test;
 use SymPress\Assets\AssetManager;
 use SymPress\Assets\Bootstrap\AssetBootstrapper;
 use SymPress\Assets\Tests\Unit\AbstractTestCase;
 use SymPress\Assets\Util\AssetHookResolver;
-use PHPUnit\Framework\Attributes\Test;
 
 final class AssetBootstrapperTest extends AbstractTestCase
 {

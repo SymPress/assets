@@ -24,10 +24,10 @@ class CacheOptimizationContextFactoryTest extends AbstractTestCase
 
         $context = (new CacheOptimizationContextFactory())->create([
             Script::class => [
-                $script->handle() => $script,
+                $script->handle()  => $script,
                 $ignored->handle() => $ignored,
             ],
-            Style::class => [
+            Style::class  => [
                 $style->handle() => $style,
             ],
         ]);

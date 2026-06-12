@@ -21,11 +21,11 @@ class CacheOptimizationAwareTraitTest extends AbstractTestCase
         static::assertInstanceOf(CacheOptimizationExclusion::class, $script->cacheOptimizationExclusion());
         static::assertSame(
             [
-                'data-no-minify' => true,
+                'data-no-minify'   => true,
                 'data-no-optimize' => true,
-                'data-noptimize' => true,
-                'data-no-defer' => true,
-                'data-cfasync' => 'false',
+                'data-noptimize'   => true,
+                'data-no-defer'    => true,
+                'data-cfasync'     => 'false',
                 'data-wpfc-render' => 'false',
             ],
             $script->attributes(),
@@ -41,9 +41,9 @@ class CacheOptimizationAwareTraitTest extends AbstractTestCase
 
         static::assertSame(
             [
-                'data-no-minify' => true,
+                'data-no-minify'   => true,
                 'data-no-optimize' => true,
-                'data-noptimize' => true,
+                'data-noptimize'   => true,
             ],
             $style->attributes(),
         );

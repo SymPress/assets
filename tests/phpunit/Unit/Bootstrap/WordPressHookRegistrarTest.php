@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace SymPress\Assets\Tests\Unit\Bootstrap;
 
-use SymPress\Assets\Bootstrap\WordPressHookRegistrar;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use SymPress\Assets\Bootstrap\WordPressHookRegistrar;
 
 final class WordPressHookRegistrarTest extends TestCase
 {
@@ -47,7 +47,7 @@ final class WordPressHookRegistrarTest extends TestCase
 
         self::assertSame(
             [
-                'function' => __METHOD__,
+                'function'      => __METHOD__,
                 'accepted_args' => 0,
             ],
             $GLOBALS['wp_filter']['wp_loaded'][13][__METHOD__],
@@ -63,9 +63,9 @@ final class WordPressHookRegistrarTest extends TestCase
 
         self::assertSame(
             [
-                'hook' => 'wp_loaded',
-                'callback' => __METHOD__,
-                'priority' => 13,
+                'hook'         => 'wp_loaded',
+                'callback'     => __METHOD__,
+                'priority'     => 13,
                 'acceptedArgs' => 0,
             ],
             $hookApi->registrations[0] ?? null,

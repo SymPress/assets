@@ -8,9 +8,7 @@ use SymPress\Assets\Bootstrap\WordPressHookApi;
 
 final class RecordingWordPressHookApi implements WordPressHookApi
 {
-    /**
-     * @var list<array{hook: string, callback: string, priority: int, acceptedArgs: int}>
-     */
+    /** @var list<array{hook: string, callback: string, priority: int, acceptedArgs: int}> */
     public array $registrations = [];
 
     public function __construct(
@@ -32,9 +30,9 @@ final class RecordingWordPressHookApi implements WordPressHookApi
     public function addAction(string $hook, string $callback, int $priority, int $acceptedArgs): void
     {
         $this->registrations[] = [
-            'hook' => $hook,
-            'callback' => $callback,
-            'priority' => $priority,
+            'hook'         => $hook,
+            'callback'     => $callback,
+            'priority'     => $priority,
             'acceptedArgs' => $acceptedArgs,
         ];
     }

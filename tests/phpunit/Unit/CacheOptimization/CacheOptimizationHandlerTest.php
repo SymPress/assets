@@ -82,7 +82,7 @@ class CacheOptimizationHandlerTest extends AbstractTestCase
         Actions\expectDone(AssetManager::ACTION_SETUP)->once()->with($manager);
         $manager->register($critical, $ordinary);
 
-        $manager->ignoreCache(static fn (Script $asset): bool => 'critical' === $asset->handle());
+        $manager->ignoreCache(static fn (Script $asset): bool => $asset->handle() === 'critical');
 
         static::assertNotNull($critical->cacheOptimizationExclusion());
         static::assertTrue($critical->cacheOptimizationExclusion()?->minify());

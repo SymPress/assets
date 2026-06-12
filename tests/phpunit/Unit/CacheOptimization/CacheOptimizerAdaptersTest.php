@@ -18,9 +18,7 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 class CacheOptimizerAdaptersTest extends AbstractTestCase
 {
-    /**
-     * @var array<string, callable>
-     */
+    /** @var array<string, callable> */
     private array $callbacks = [];
 
     public function testWpRocketAdapterRegistersFileDeferAndDelayExclusions(): void
@@ -203,7 +201,7 @@ class CacheOptimizerAdaptersTest extends AbstractTestCase
             }),
         ];
 
-        if (4 === $argumentCount) {
+        if ($argumentCount === 4) {
             $arguments[] = 10;
             $arguments[] = 3;
         }
@@ -213,7 +211,7 @@ class CacheOptimizerAdaptersTest extends AbstractTestCase
 
     private function provider(): CacheOptimizationContextProvider
     {
-        return new class($this->context()) implements CacheOptimizationContextProvider {
+        return new class ($this->context()) implements CacheOptimizationContextProvider {
             public function __construct(
                 private readonly CacheOptimizationContext $context,
             ) {
