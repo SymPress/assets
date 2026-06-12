@@ -24,8 +24,8 @@ final readonly class FilesystemPath
 
     public static function isBasePath(string $basePath, string $path): bool
     {
-        return '' !== $basePath
-            && '' !== $path
+        return $basePath !== ''
+            && $path !== ''
             && Path::isBasePath($basePath, $path);
     }
 

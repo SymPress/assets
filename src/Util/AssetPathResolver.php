@@ -21,9 +21,7 @@ class AssetPathResolver
             ?? null;
     }
 
-    /**
-     * @psalm-suppress PossiblyFalseArgument
-     */
+    /** @psalm-suppress PossiblyFalseArgument */
     public static function resolveForVendorUrl(string $normalizedUrl): ?string
     {
         // Now let's see if it's inside vendor.
@@ -34,7 +32,7 @@ class AssetPathResolver
         }
 
         $fullVendorPath = FilesystemPath::canonical(__DIR__ . '/../../../');
-        if (null === $fullVendorPath) {
+        if ($fullVendorPath === null) {
             return null;
         }
 
@@ -65,7 +63,7 @@ class AssetPathResolver
 
         $relative = self::relativeUrlPath($normalizedUrl, $vendorUrl);
 
-        return null === $relative
+        return $relative === null
             ? null
             : self::resolveRelativeFile($fullVendorPath, $relative);
     }
@@ -89,15 +87,15 @@ class AssetPathResolver
         $relativeChildUrl = self::relativeUrlPath($normalizedUrl, $childUrl);
         $relativeParentUrl = self::relativeUrlPath($normalizedUrl, $themeUrl);
 
-        if (null !== $relativeChildUrl) {
+        if ($relativeChildUrl !== null) {
             $base = get_stylesheet_directory();
             $relativeThemeUrl = $relativeChildUrl;
-        } elseif (null !== $relativeParentUrl) {
+        } elseif ($relativeParentUrl !== null) {
             $base = get_template_directory();
             $relativeThemeUrl = $relativeParentUrl;
         }
 
-        return null === $relativeThemeUrl
+        return $relativeThemeUrl === null
             ? null
             : self::resolveRelativeFile($base, $relativeThemeUrl);
     }
@@ -116,15 +114,15 @@ class AssetPathResolver
         $relativePluginsUrl = self::relativeUrlPath($normalizedUrl, $pluginsUrl);
         $relativeMuPluginsUrl = self::relativeUrlPath($normalizedUrl, $muPluginsUrl);
 
-        if (null !== $relativePluginsUrl) {
+        if ($relativePluginsUrl !== null) {
             $basePath = WP_PLUGIN_DIR;
             $relativePluginUrl = $relativePluginsUrl;
-        } elseif (null !== $relativeMuPluginsUrl) {
+        } elseif ($relativeMuPluginsUrl !== null) {
             $basePath = WPMU_PLUGIN_DIR;
             $relativePluginUrl = $relativeMuPluginsUrl;
         }
 
-        return null === $relativePluginUrl
+        return $relativePluginUrl === null
             ? null
             : self::resolveRelativeFile($basePath, $relativePluginUrl);
     }
@@ -147,12 +145,12 @@ class AssetPathResolver
         }
 
         $relative = trim($relative, '/');
-        if ('' === $relative) {
+        if ($relative === '') {
             return '';
         }
 
         foreach (explode('/', $relative) as $segment) {
-            if ('..' === $segment || '' === $segment || str_contains($segment, '\\')) {
+            if ($segment === '..' || $segment === '' || str_contains($segment, '\\')) {
                 return null;
             }
         }
@@ -162,17 +160,17 @@ class AssetPathResolver
 
     private static function resolveRelativeFile(string $basePath, string $relativePath): ?string
     {
-        if ('' === $relativePath) {
+        if ($relativePath === '') {
             return null;
         }
 
         $basePath = FilesystemPath::canonical($basePath);
-        if (null === $basePath) {
+        if ($basePath === null) {
             return null;
         }
 
         $candidate = FilesystemPath::canonical(FilesystemPath::join($basePath, ltrim($relativePath, '/\\')));
-        if (null === $candidate) {
+        if ($candidate === null) {
             return null;
         }
 

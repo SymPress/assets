@@ -32,9 +32,7 @@ final class WordPressContext
         self::WP_ACTIVATE,
     ];
 
-    /**
-     * @param array<string, bool> $data
-     */
+    /** @param array<string, bool> $data */
     private function __construct(
         private array $data,
     ) {
@@ -44,7 +42,7 @@ final class WordPressContext
     {
         $installing = function_exists('wp_installing')
             ? wp_installing()
-            : (defined('WP_INSTALLING') && true === constant('WP_INSTALLING'));
+            : (defined('WP_INSTALLING') && constant('WP_INSTALLING') === true);
         $xmlRpc = defined('XMLRPC_REQUEST') && XMLRPC_REQUEST;
         $isCore = defined('ABSPATH');
         $isCli = defined('WP_CLI');
@@ -63,16 +61,16 @@ final class WordPressContext
 
         $context = new self(
             [
-                self::AJAX => $isAjax,
-                self::BACKOFFICE => $isAdmin,
-                self::CLI => $isCli,
-                self::CORE => ($isCore || $xmlRpc) && (!$installing || $isWpActivate),
-                self::CRON => $isCron,
+                self::AJAX        => $isAjax,
+                self::BACKOFFICE  => $isAdmin,
+                self::CLI         => $isCli,
+                self::CORE        => ($isCore || $xmlRpc) && (!$installing || $isWpActivate),
+                self::CRON        => $isCron,
                 self::FRONTOFFICE => $isFront,
-                self::INSTALLING => $installing && !$isWpActivate,
-                self::LOGIN => $isLogin,
-                self::REST => $isRest,
-                self::XML_RPC => $xmlRpc && !$installing,
+                self::INSTALLING  => $installing && !$isWpActivate,
+                self::LOGIN       => $isLogin,
+                self::REST        => $isRest,
+                self::XML_RPC     => $xmlRpc && !$installing,
                 self::WP_ACTIVATE => $isWpActivate,
             ],
         );
@@ -141,7 +139,7 @@ final class WordPressContext
     private static function isLoginRequest(): bool
     {
         if (function_exists('is_login')) {
-            return false !== is_login();
+            return is_login() !== false;
         }
 
         if (!empty($_REQUEST['interim-login'])) {
@@ -162,7 +160,7 @@ final class WordPressContext
             return false;
         }
 
-        return false !== stripos($loginUrl, $scriptName);
+        return stripos($loginUrl, $scriptName) !== false;
     }
 
     private static function isWpActivateRequest(): bool
@@ -181,7 +179,7 @@ final class WordPressContext
             return false;
         }
 
-        if ('' !== $pageNow && basename($pageNow) === $page) {
+        if ($pageNow !== '' && basename($pageNow) === $page) {
             return true;
         }
 
@@ -218,9 +216,11 @@ final class WordPressContext
             function (mixed $screen): void {
                 $callback = [$screen, 'in_admin'];
 
-                if (is_callable($callback) && (bool) $callback()) {
-                    $this->force(self::BACKOFFICE);
+                if (!is_callable($callback) || !(bool) $callback()) {
+                    return;
                 }
+
+                $this->force(self::BACKOFFICE);
             },
             PHP_INT_MIN,
         );

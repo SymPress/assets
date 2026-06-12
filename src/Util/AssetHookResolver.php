@@ -10,9 +10,7 @@ final readonly class AssetHookResolver
 {
     private object $context;
 
-    /**
-     * @param object|null $context any context object exposing the WpContext query methods
-     */
+    /** @param object|null $context any context object exposing the WpContext query methods */
     public function __construct(?object $context = null)
     {
         $this->context = $context ?? self::determineContext();
@@ -21,7 +19,7 @@ final readonly class AssetHookResolver
     /**
      * Resolving to the current location/page in WordPress all current hooks.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function resolve(): array
     {
