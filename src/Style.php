@@ -13,24 +13,16 @@ class Style extends BaseAsset implements Asset, DataAwareAsset, FilterAwareAsset
     use DataAwareTrait;
     use FilterAwareTrait;
 
-    /**
-     * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#attr-media
-     */
+    /** @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link#attr-media */
     protected string $media = 'all';
 
-    /**
-     * @var StyleLoadingMode::BLOCKING|StyleLoadingMode::PRELOAD
-     */
+    /** @var StyleLoadingMode::BLOCKING|StyleLoadingMode::PRELOAD */
     protected string $loadingMode = StyleLoadingMode::BLOCKING;
 
-    /**
-     * @var string[]|null
-     */
+    /** @var array<string>|null */
     protected ?array $inlineStyles = null;
 
-    /**
-     * @var array<string, array<string, string>>
-     */
+    /** @var array<string, array<string, string>> */
     protected array $cssVars = [];
 
     public function media(): string
@@ -45,9 +37,7 @@ class Style extends BaseAsset implements Asset, DataAwareAsset, FilterAwareAsset
         return $this;
     }
 
-    /**
-     * @return StyleLoadingMode::BLOCKING|StyleLoadingMode::PRELOAD
-     */
+    /** @return StyleLoadingMode::BLOCKING|StyleLoadingMode::PRELOAD */
     public function loadingMode(): string
     {
         return $this->loadingMode;
@@ -57,7 +47,7 @@ class Style extends BaseAsset implements Asset, DataAwareAsset, FilterAwareAsset
     {
         $this->loadingMode = StyleLoadingMode::normalize($loadingMode);
 
-        if (StyleLoadingMode::PRELOAD === $this->loadingMode) {
+        if ($this->loadingMode === StyleLoadingMode::PRELOAD) {
             $this->withFilters(AsyncStyleOutputFilter::class);
 
             return $this;
@@ -65,7 +55,7 @@ class Style extends BaseAsset implements Asset, DataAwareAsset, FilterAwareAsset
 
         $this->filters = array_values(array_filter(
             $this->filters,
-            static fn (mixed $filter): bool => AsyncStyleOutputFilter::class !== $filter,
+            static fn (mixed $filter): bool => $filter !== AsyncStyleOutputFilter::class,
         ));
 
         return $this;
@@ -81,17 +71,13 @@ class Style extends BaseAsset implements Asset, DataAwareAsset, FilterAwareAsset
         return $this->withLoadingMode(StyleLoadingMode::PRELOAD);
     }
 
-    /**
-     * @return string[]|null
-     */
+    /** @return array<string>|null */
     public function inlineStyles(): ?array
     {
         return $this->inlineStyles;
     }
 
-    /**
-     * @see https://codex.wordpress.org/Function_Reference/wp_add_inline_style
-     */
+    /** @see https://codex.wordpress.org/Function_Reference/wp_add_inline_style */
     public function withInlineStyles(string $inline): static
     {
         if (!$this->inlineStyles) {
@@ -110,9 +96,7 @@ class Style extends BaseAsset implements Asset, DataAwareAsset, FilterAwareAsset
      * with '--'.
      *
      * @param array<string, string> $vars
-     *
      * @return $this
-     *
      * @example Style::withCssVars('.some-element', ['--white' => '#fff']);
      * @example Style::withCssVars('.some-element', ['white' => '#fff']);
      */
@@ -132,9 +116,7 @@ class Style extends BaseAsset implements Asset, DataAwareAsset, FilterAwareAsset
         return $this;
     }
 
-    /**
-     * @return array<string, array<string, string>>
-     */
+    /** @return array<string, array<string, string>> */
     public function cssVars(): array
     {
         return $this->cssVars;
@@ -162,9 +144,6 @@ class Style extends BaseAsset implements Asset, DataAwareAsset, FilterAwareAsset
         return $this->preload();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function defaultHandler(): string
     {
         return StyleHandler::class;
