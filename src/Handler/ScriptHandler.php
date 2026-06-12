@@ -15,14 +15,8 @@ class ScriptHandler implements AssetHandler, OutputFilterAwareAssetHandler
 {
     use OutputFilterAwareAssetHandlerTrait;
 
-    protected \WP_Scripts $wpScripts;
-
-    /**
-     * ScriptHandler constructor.
-     *
-     * @param array<string, callable> $outputFilters
-     */
-    public function __construct(\WP_Scripts $wpScripts, array $outputFilters = [])
+    /** @param array<string, callable> $outputFilters */
+    public function __construct(protected \WP_Scripts $wpScripts, array $outputFilters = [])
     {
         /** @phpstan-ignore-next-line classConstant.deprecatedClass, new.deprecatedClass */
         $this->withOutputFilter(AsyncScriptOutputFilter::class, new AsyncScriptOutputFilter());
@@ -31,7 +25,6 @@ class ScriptHandler implements AssetHandler, OutputFilterAwareAssetHandler
         $this->withOutputFilter(InlineAssetOutputFilter::class, new InlineAssetOutputFilter());
         $this->withOutputFilter(AttributesOutputFilter::class, new AttributesOutputFilter());
 
-        $this->wpScripts = $wpScripts;
         foreach ($outputFilters as $name => $callable) {
             $this->withOutputFilter($name, $callable);
         }
@@ -44,10 +37,10 @@ class ScriptHandler implements AssetHandler, OutputFilterAwareAssetHandler
         }
 
         $handle = $asset->handle();
-        if ('' === $handle) {
+        if ($handle === '') {
             return false;
         }
-        /* @var non-empty-string $handle */
+        /** @var non-empty-string $handle */
 
         if (!$this->register($asset)) {
             return false;
@@ -69,21 +62,21 @@ class ScriptHandler implements AssetHandler, OutputFilterAwareAssetHandler
         }
 
         $handle = $asset->handle();
-        if ('' === $handle) {
+        if ($handle === '') {
             return false;
         }
-        /* @var non-empty-string $handle */
+        /** @var non-empty-string $handle */
 
         $strategy = $asset->loadingStrategy();
         $args = ['in_footer' => $asset->inFooter()];
-        if (null !== $strategy) {
+        if ($strategy !== null) {
             $args['strategy'] = $strategy;
         }
 
         wp_register_script(
             $handle,
-            '' !== $asset->url() ? $asset->url() : false,
-            array_values(array_filter($asset->dependencies(), static fn (string $dependency): bool => '' !== $dependency)),
+            $asset->url() !== '' ? $asset->url() : false,
+            array_values(array_filter($asset->dependencies(), static fn (string $dependency): bool => $dependency !== '')),
             $asset->version(),
             $args,
         );
@@ -97,9 +90,11 @@ class ScriptHandler implements AssetHandler, OutputFilterAwareAssetHandler
 
                 $localizeData = [];
                 foreach ($args as $key => $value) {
-                    if (is_string($key)) {
-                        $localizeData[$key] = $value;
+                    if (!is_string($key)) {
+                        continue;
                     }
+
+                    $localizeData[$key] = $value;
                 }
 
                 /*
@@ -113,13 +108,15 @@ class ScriptHandler implements AssetHandler, OutputFilterAwareAssetHandler
         }
 
         foreach ($asset->inlineScripts() as $location => $data) {
-            if (count($data) > 0) {
-                wp_add_inline_script($handle, implode("\n", $data), $location);
+            if (count($data) <= 0) {
+                continue;
             }
+
+            wp_add_inline_script($handle, implode("\n", $data), $location);
         }
 
         $translation = $asset->translation();
-        if ('' !== $translation['domain']) {
+        if ($translation['domain'] !== '') {
             /*
              * The $path is allowed to be "null"- or a "string"-value.
              * @psalm-suppress PossiblyNullArgument

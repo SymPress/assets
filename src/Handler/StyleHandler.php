@@ -14,20 +14,13 @@ class StyleHandler implements AssetHandler, OutputFilterAwareAssetHandler
 {
     use OutputFilterAwareAssetHandlerTrait;
 
-    protected \WP_Styles $wpStyles;
-
-    /**
-     * StyleHandler constructor.
-     *
-     * @param array<string, callable> $outputFilters
-     */
-    public function __construct(\WP_Styles $wpStyles, array $outputFilters = [])
+    /** @param array<string, callable> $outputFilters */
+    public function __construct(protected \WP_Styles $wpStyles, array $outputFilters = [])
     {
         $this->withOutputFilter(AsyncStyleOutputFilter::class, new AsyncStyleOutputFilter());
         $this->withOutputFilter(InlineAssetOutputFilter::class, new InlineAssetOutputFilter());
         $this->withOutputFilter(AttributesOutputFilter::class, new AttributesOutputFilter());
 
-        $this->wpStyles = $wpStyles;
         foreach ($outputFilters as $name => $callable) {
             $this->withOutputFilter($name, $callable);
         }
@@ -40,7 +33,7 @@ class StyleHandler implements AssetHandler, OutputFilterAwareAssetHandler
         }
 
         $handle = $asset->handle();
-        if ('' === $handle) {
+        if ($handle === '') {
             return false;
         }
 
@@ -64,10 +57,10 @@ class StyleHandler implements AssetHandler, OutputFilterAwareAssetHandler
         }
 
         $handle = $asset->handle();
-        if ('' === $handle) {
+        if ($handle === '') {
             return false;
         }
-        /* @var non-empty-string $handle */
+        /** @var non-empty-string $handle */
 
         wp_register_style(
             $handle,
@@ -78,7 +71,7 @@ class StyleHandler implements AssetHandler, OutputFilterAwareAssetHandler
         );
 
         $inlineStyles = $asset->inlineStyles();
-        if (null !== $inlineStyles) {
+        if ($inlineStyles !== null) {
             wp_add_inline_style($handle, implode("\n", $inlineStyles));
         }
 

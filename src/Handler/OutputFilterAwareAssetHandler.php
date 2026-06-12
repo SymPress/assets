@@ -9,9 +9,7 @@ use SymPress\Assets\OutputFilter\AssetOutputFilter;
 
 interface OutputFilterAwareAssetHandler
 {
-    /**
-     * @return bool true when at least 1 filter is applied, otherwise false
-     */
+    /** @return bool true when at least 1 filter is applied, otherwise false */
     public function filter(Asset $asset): bool;
 
     /**

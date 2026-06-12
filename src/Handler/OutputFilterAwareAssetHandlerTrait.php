@@ -10,14 +10,10 @@ use SymPress\Assets\OutputFilter\AssetOutputFilter;
 
 trait OutputFilterAwareAssetHandlerTrait
 {
-    /**
-     * @var array<string, callable|class-string<AssetOutputFilter>>
-     */
+    /** @var array<string, callable|class-string<AssetOutputFilter>> */
     protected array $outputFilters = [];
 
-    /**
-     * @var array<string, bool>
-     */
+    /** @var array<string, bool> */
     private array $registeredOutputFilters = [];
 
     /**
@@ -38,9 +34,7 @@ trait OutputFilterAwareAssetHandlerTrait
         return $this;
     }
 
-    /**
-     * @return array<string, callable|class-string<AssetOutputFilter>>
-     */
+    /** @return array<string, callable|class-string<AssetOutputFilter>> */
     public function outputFilters(): array
     {
         return $this->outputFilters;
@@ -53,14 +47,14 @@ trait OutputFilterAwareAssetHandlerTrait
         }
 
         $filters = $this->currentOutputFilters($asset);
-        if (0 === count($filters)) {
+        if (count($filters) === 0) {
             return false;
         }
 
         $filterKey = $this->filterKey($asset);
         $alreadyRegistered = !empty($this->registeredOutputFilters[$filterKey]);
         $registeredAsset = $this->outputFilterAssets[$asset->handle()] ?? null;
-        if (null !== $registeredAsset && $registeredAsset['key'] !== $filterKey) {
+        if ($registeredAsset !== null && $registeredAsset['key'] !== $filterKey) {
             throw new \LogicException(sprintf(
                 'Output filters cannot be registered for duplicate asset handle "%s" on hook "%s".',
                 $asset->handle(),
@@ -70,8 +64,8 @@ trait OutputFilterAwareAssetHandlerTrait
 
         $this->registeredOutputFilters[$filterKey] = true;
         $this->outputFilterAssets[$asset->handle()] = [
-            'key' => $filterKey,
-            'asset' => $asset,
+            'key'     => $filterKey,
+            'asset'   => $asset,
             'filters' => array_values($filters),
         ];
 
@@ -89,9 +83,7 @@ trait OutputFilterAwareAssetHandlerTrait
         return !$alreadyRegistered;
     }
 
-    /**
-     * @return array<class-string<AssetOutputFilter>|callable>
-     */
+    /** @return array<class-string<AssetOutputFilter>|callable> */
     protected function currentOutputFilters(Asset $asset): array
     {
         $filters = [];
@@ -106,9 +98,11 @@ trait OutputFilterAwareAssetHandlerTrait
                 $filters[] = $filter;
                 continue;
             }
-            if (isset($registeredFilters[$filter])) {
-                $filters[] = $registeredFilters[$filter];
+            if (!isset($registeredFilters[$filter])) {
+                continue;
             }
+
+            $filters[] = $registeredFilters[$filter];
         }
 
         return $filters;
@@ -121,13 +115,13 @@ trait OutputFilterAwareAssetHandlerTrait
 
     private function filterKey(Asset $asset): string
     {
-        return $this->filterHook() . '|' . get_class($asset) . '|' . $asset->handle();
+        return $this->filterHook() . '|' . $asset::class . '|' . $asset->handle();
     }
 
     private function applyOutputFilters(string $html, string $handle): string
     {
         $registration = $this->outputFilterAssets[$handle] ?? null;
-        if (null === $registration) {
+        if ($registration === null) {
             return $html;
         }
 
@@ -137,9 +131,11 @@ trait OutputFilterAwareAssetHandlerTrait
             }
 
             $result = $filter($html, $registration['asset']);
-            if (is_scalar($result) || $result instanceof \Stringable) {
-                $html = (string) $result;
+            if (!is_scalar($result) && !($result instanceof \Stringable)) {
+                continue;
             }
+
+            $html = (string) $result;
         }
 
         return $html;

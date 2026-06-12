@@ -41,7 +41,7 @@ class ScriptModuleHandler implements AssetHandler
         }
 
         $handle = $asset->handle();
-        if ('' === $handle) {
+        if ($handle === '') {
             return false;
         }
 
@@ -65,7 +65,7 @@ class ScriptModuleHandler implements AssetHandler
     protected function shareData(ScriptModule $asset): void
     {
         $handle = $asset->handle();
-        if ('' === $handle) {
+        if ($handle === '') {
             return;
         }
 
