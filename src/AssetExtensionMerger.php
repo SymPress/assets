@@ -9,7 +9,6 @@ final readonly class AssetExtensionMerger
     /**
      * @param array<string, mixed> $existing
      * @param array<string, mixed> $incoming
-     *
      * @return array<string, mixed>
      */
     #[\NoDiscard]
@@ -26,13 +25,11 @@ final readonly class AssetExtensionMerger
             };
         }
 
-        /* @var AssetExtensionConfig $existing */
+        /** @var AssetExtensionConfig $existing */
         return $existing;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private function mergeList(mixed $existing, mixed $incoming): array
     {
         return [
@@ -41,9 +38,7 @@ final readonly class AssetExtensionMerger
         ];
     }
 
-    /**
-     * @return array{before?: list<string>, after?: list<string>}
-     */
+    /** @return array{before?: list<string>, after?: list<string>} */
     private function mergeInline(mixed $existing, mixed $incoming): array
     {
         $existing = is_array($existing) ? $existing : [];
@@ -61,9 +56,7 @@ final readonly class AssetExtensionMerger
         return $merged;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     private function replaceMap(mixed $existing, mixed $incoming): array
     {
         $merged = [];
@@ -77,12 +70,10 @@ final readonly class AssetExtensionMerger
         return $merged;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private function listFrom(mixed $value): array
     {
-        if (null === $value) {
+        if ($value === null) {
             return [];
         }
 
@@ -96,9 +87,11 @@ final readonly class AssetExtensionMerger
         $normalized = [];
 
         foreach ($list as $item) {
-            if (is_scalar($item) || $item instanceof \Stringable) {
-                $normalized[] = (string) $item;
+            if (!is_scalar($item) && !($item instanceof \Stringable)) {
+                continue;
             }
+
+            $normalized[] = (string) $item;
         }
 
         return $normalized;
