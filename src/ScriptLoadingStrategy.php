@@ -10,16 +10,14 @@ final readonly class ScriptLoadingStrategy
     public const string DEFER = 'defer';
     public const string ASYNC = 'async';
 
-    /**
-     * @return self::ASYNC|self::DEFER|null
-     */
+    /** @return self::ASYNC|self::DEFER|null */
     public static function normalize(?string $strategy): ?string
     {
-        if (null === $strategy || '' === $strategy || self::BLOCKING === $strategy) {
+        if ($strategy === null || $strategy === '' || $strategy === self::BLOCKING) {
             return null;
         }
 
-        if (self::DEFER === $strategy || self::ASYNC === $strategy) {
+        if ($strategy === self::DEFER || $strategy === self::ASYNC) {
             return $strategy;
         }
 
