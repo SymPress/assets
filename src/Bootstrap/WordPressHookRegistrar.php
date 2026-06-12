@@ -46,7 +46,7 @@ final class WordPressHookRegistrar
         }
 
         $wp_filter['wp_loaded'][$priority][$callback] = [
-            'function' => $callback,
+            'function'      => $callback,
             'accepted_args' => self::ACCEPTED_ARGS,
         ];
     }
