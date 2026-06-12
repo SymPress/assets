@@ -31,7 +31,7 @@ function withAssetSuffix(string $file): string
 {
     $suffix = assetSuffix();
     $extension = Path::getExtension($file);
-    if ('' === $extension) {
+    if ($extension === '') {
         return $file;
     }
 

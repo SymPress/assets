@@ -6,8 +6,6 @@ namespace SymPress\Assets;
 
 interface AssetProviderInterface
 {
-    /**
-     * @return iterable<Asset>
-     */
+    /** @return iterable<Asset> */
     public function assets(): iterable;
 }
