@@ -28,18 +28,16 @@ interface Asset
     public const string HOOK_ACTIVATE = 'activate_wp_head';
     /**
      * Hooks to Locations map.
-     *
-     * @var array<string,int>
      */
     public const array HOOK_TO_LOCATION = [
-        Asset::HOOK_FRONTEND => Asset::FRONTEND,
-        Asset::HOOK_BACKEND => Asset::BACKEND,
-        Asset::HOOK_LOGIN => Asset::LOGIN,
-        Asset::HOOK_CUSTOMIZER => Asset::CUSTOMIZER,
-        Asset::HOOK_CUSTOMIZER_PREVIEW => Asset::CUSTOMIZER_PREVIEW,
-        Asset::HOOK_BLOCK_ASSETS => Asset::BLOCK_ASSETS,
+        Asset::HOOK_FRONTEND            => Asset::FRONTEND,
+        Asset::HOOK_BACKEND             => Asset::BACKEND,
+        Asset::HOOK_LOGIN               => Asset::LOGIN,
+        Asset::HOOK_CUSTOMIZER          => Asset::CUSTOMIZER,
+        Asset::HOOK_CUSTOMIZER_PREVIEW  => Asset::CUSTOMIZER_PREVIEW,
+        Asset::HOOK_BLOCK_ASSETS        => Asset::BLOCK_ASSETS,
         Asset::HOOK_BLOCK_EDITOR_ASSETS => Asset::BLOCK_EDITOR_ASSETS,
-        Asset::HOOK_ACTIVATE => Asset::ACTIVATE,
+        Asset::HOOK_ACTIVATE            => Asset::ACTIVATE,
     ];
 
     /**
@@ -65,7 +63,7 @@ interface Asset
     /**
      * A list of handle-dependencies.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function dependencies(): array;
 
@@ -80,9 +78,7 @@ interface Asset
 
     public function enqueue(): bool;
 
-    /**
-     * @param bool|callable $enqueue
-     */
+    /** @param bool|callable $enqueue */
     public function canEnqueue($enqueue): static;
 
     /**
@@ -105,8 +101,6 @@ interface Asset
      */
     public function handler(): string;
 
-    /**
-     * @param class-string<AssetHandler> $handler
-     */
+    /** @param class-string<AssetHandler> $handler */
     public function useHandler(string $handler): static;
 }
