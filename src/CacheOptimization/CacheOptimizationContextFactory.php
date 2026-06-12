@@ -12,9 +12,7 @@ use SymPress\Assets\Util\FilesystemPath;
 
 final readonly class CacheOptimizationContextFactory
 {
-    /**
-     * @param array<class-string, array<string, Asset>> $assets
-     */
+    /** @param array<class-string, array<string, Asset>> $assets */
     public function create(array $assets): CacheOptimizationContext
     {
         $scripts = [];
@@ -27,7 +25,7 @@ final readonly class CacheOptimizationContextFactory
                 }
 
                 $exclusion = $asset->cacheOptimizationExclusion();
-                if (null === $exclusion) {
+                if ($exclusion === null) {
                     continue;
                 }
 
@@ -38,9 +36,11 @@ final readonly class CacheOptimizationContextFactory
                     continue;
                 }
 
-                if ($asset instanceof Style) {
-                    $styles[] = $optimizationAsset;
+                if (!($asset instanceof Style)) {
+                    continue;
                 }
+
+                $styles[] = $optimizationAsset;
             }
         }
 
@@ -61,9 +61,7 @@ final readonly class CacheOptimizationContextFactory
         );
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private function fileIdentifiers(string $url, string $filePath): array
     {
         $identifiers = [$url, $this->withoutQuery($url), $this->urlPath($url)];
@@ -75,12 +73,12 @@ final readonly class CacheOptimizationContextFactory
             $identifiers[] = $this->urlPath($decodedUrl);
         }
 
-        if ('' !== $filePath) {
+        if ($filePath !== '') {
             $identifiers[] = $filePath;
             $identifiers[] = FilesystemPath::normalize($filePath);
         }
 
-        return array_values(array_unique(array_filter($identifiers, static fn (string $identifier): bool => '' !== $identifier)));
+        return array_values(array_unique(array_filter($identifiers, static fn (string $identifier): bool => $identifier !== '')));
     }
 
     private function withoutQuery(string $reference): string
