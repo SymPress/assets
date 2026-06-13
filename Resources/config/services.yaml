@@ -5,11 +5,11 @@ services:
         public: false
 
     SymPress\Assets\:
-        resource: '../bundle/'
+        resource: '../../bundle/'
         exclude:
-            - '../bundle/AssetsBundle.php'
-            - '../bundle/AssetConfiguratorInterface.php'
-            - '../bundle/AssetProviderInterface.php'
+            - '../../bundle/AssetsBundle.php'
+            - '../../bundle/AssetConfiguratorInterface.php'
+            - '../../bundle/AssetProviderInterface.php'
 
     SymPress\Assets\AssetManager:
         arguments:

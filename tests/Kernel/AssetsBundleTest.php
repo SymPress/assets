@@ -23,7 +23,7 @@ final class AssetsBundleTest extends TestCase
         (new AssetsBundle())->build($container);
         (new YamlFileLoader(
             $container,
-            new FileLocator(dirname(__DIR__, 2) . '/config'),
+            new FileLocator(dirname(__DIR__, 2) . '/Resources/config'),
             'test',
         ))->load('services.yaml');
 
