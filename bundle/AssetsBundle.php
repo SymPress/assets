@@ -12,6 +12,8 @@ final class AssetsBundle extends AbstractBundle
 {
     public function build(ContainerBuilder $container): void
     {
+        parent::build($container);
+
         $container->registerForAutoconfiguration(AssetConfiguratorInterface::class)
             ->addTag('assets.configurator');
 
