@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SymPress\Assets;
 
+/** @phpstan-import-type AssetExtensionConfig from AssetFactory */
 final readonly class AssetExtensionMerger
 {
     /**

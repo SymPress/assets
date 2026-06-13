@@ -16,6 +16,7 @@ const BOOTSTRAPPED = true;
 
 function bootstrap(?AssetManager $assetManager = null): bool
 {
+    /** @var AssetBootstrapper|null $assetBootstrapper */
     static $assetBootstrapper = null;
 
     $assetBootstrapper ??= new AssetBootstrapper();

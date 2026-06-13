@@ -292,7 +292,7 @@ final readonly class AssetConfigurationApplier
         }
     }
 
-    /** @param array<string, mixed> $config */
+    /** @param array<mixed> $config */
     private function applyResourceHintConfig(ResourceHintAwareAsset&Asset $asset, array $config): void
     {
         $relation = $config['relation'] ?? $config['rel'] ?? null;

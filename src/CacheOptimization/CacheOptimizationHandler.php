@@ -57,7 +57,7 @@ final class CacheOptimizationHandler implements CacheOptimizationContextProvider
 
     /**
      * @param CacheOptimizerAdapter|iterable<CacheOptimizerAdapter>|null $adapters
-     * @param list<CacheOptimizerAdapter>                                $additionalAdapters
+     * @param array<int|string, CacheOptimizerAdapter>                    $additionalAdapters
      * @return list<CacheOptimizerAdapter>
      */
     private static function normalizeAdapters(
@@ -90,7 +90,7 @@ final class CacheOptimizationHandler implements CacheOptimizationContextProvider
             $normalized[] = $adapter;
         }
 
-        return array_values($normalized);
+        return $normalized;
     }
 
     /** @return list<CacheOptimizerAdapter> */
