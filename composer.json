@@ -23,7 +23,7 @@
         "symfony/finder": "^8.0"
     },
     "require-dev": {
-        "sympress/kernel": "@dev",
+        "sympress/kernel": "dev-main",
         "brain/monkey": "^2.6",
         "friendsofphp/php-cs-fixer": "^3.94",
         "johnpbloch/wordpress-core": ">=7.0",
@@ -39,7 +39,7 @@
         "squizlabs/php_codesniffer": "^3.13",
         "szepeviktor/phpstan-wordpress": "^2.0",
         "symfony/var-dumper": "^8.1",
-        "sympress/coding-standards": "@dev"
+        "sympress/coding-standards": "dev-main"
     },
     "autoload": {
         "psr-4": {
