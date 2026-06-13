@@ -50,7 +50,10 @@ if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
 }
 
 if ($loader instanceof ClassLoader) {
+    $loader->setClassMapAuthoritative(false);
     $loader->addPsr4('SymPress\\Assets\\', ["{$libDir}/src", "{$libDir}/bundle"], true);
+    $loader->addPsr4('SymPress\\Assets\\Tests\\', "{$libDir}/tests/Kernel", true);
+    $loader->addPsr4('SymPress\\Assets\\Tests\\Unit\\', "{$libDir}/tests/phpunit/Unit", true);
 }
 
 if (!defined('ABSPATH')) {
