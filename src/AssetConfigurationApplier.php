@@ -314,7 +314,7 @@ final readonly class AssetConfigurationApplier
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param array<mixed> $config
      * @return array<string, string|bool|int|float|null>
      */
     private function resourceHintAttributes(array $config): array
