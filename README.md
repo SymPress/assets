@@ -1,5 +1,7 @@
 # SymPress Assets
 
+[![Checks](https://img.shields.io/github/actions/workflow/status/SymPress/assets/qa.yml?branch=main&label=checks)](https://github.com/SymPress/assets/actions/workflows/qa.yml) [![Release](https://img.shields.io/packagist/v/sympress/assets.svg?label=release)](https://packagist.org/packages/sympress/assets) [![PHP](https://img.shields.io/packagist/dependency-v/sympress/assets/php.svg?label=php)](https://packagist.org/packages/sympress/assets) [![Downloads](https://img.shields.io/packagist/dt/sympress/assets.svg?label=downloads)](https://packagist.org/packages/sympress/assets/stats) [![License: GPL-2.0-or-later](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
+
 Asset management for SymPress WordPress packages, plugins, and themes.
 
 The package registers classic scripts, script modules, and styles through a
