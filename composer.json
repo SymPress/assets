@@ -23,23 +23,16 @@
         "symfony/finder": "^8.0"
     },
     "require-dev": {
-        "sympress/kernel": "dev-main",
         "brain/monkey": "^2.6",
         "friendsofphp/php-cs-fixer": "^3.94",
         "johnpbloch/wordpress-core": ">=7.0",
         "mikey179/vfsstream": "^1.6",
         "mockery/mockery": "^1.6",
         "php-stubs/wordpress-stubs": ">=7.0@stable",
-        "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^2.2",
-        "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-mockery": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "phpunit/phpunit": "^10.5",
-        "squizlabs/php_codesniffer": "^3.13",
-        "szepeviktor/phpstan-wordpress": "^2.0",
         "symfony/var-dumper": "^8.1",
-        "sympress/coding-standards": "dev-main"
+        "sympress/kernel": "dev-main",
+        "sympress/qa": "dev-main"
     },
     "autoload": {
         "psr-4": {
@@ -67,19 +60,22 @@
     "scripts": {
         "cs": [
             "Composer\\Config::disableProcessTimeout",
-            "phpcs --standard=phpcs.xml.dist"
+            "qa cs"
         ],
         "cs:fix": [
             "Composer\\Config::disableProcessTimeout",
-            "phpcbf --standard=phpcs.xml.dist"
+            "qa cs:fix"
         ],
         "static-analysis": [
             "Composer\\Config::disableProcessTimeout",
-            "phpstan analyse --memory-limit=1G --no-progress -c phpstan.neon.dist"
+            "qa static-analysis"
         ],
         "tests": [
             "Composer\\Config::disableProcessTimeout",
-            "phpunit --configuration phpunit.xml.dist --no-coverage"
+            "qa tests"
+        ],
+        "test": [
+            "@tests"
         ],
         "qa": [
             "@cs",
@@ -92,8 +88,8 @@
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "allow-plugins": {
-            "phpstan/extension-installer": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
         }
     },
     "repositories": [
