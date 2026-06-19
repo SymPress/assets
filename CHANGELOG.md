@@ -8,4 +8,10 @@ where applicable.
 
 ## Unreleased
 
-- Initial SymPress Assets package documentation.
+### Changed
+
+- Adopt shared SymPress QA tooling for package scripts and development dependencies.
+
+### Fixed
+
+- Normalize script module dependencies to WordPress script module dependency descriptors.
