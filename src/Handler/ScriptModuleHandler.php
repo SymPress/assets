@@ -50,7 +50,7 @@ class ScriptModuleHandler implements AssetHandler
         wp_register_script_module(
             $handle,
             $asset->url(),
-            $asset->dependencies(),
+            $this->dependencies($asset),
             $asset->version(),
         );
 
@@ -82,5 +82,21 @@ class ScriptModuleHandler implements AssetHandler
             PHP_INT_MAX - 10,
             1,
         );
+    }
+
+    /** @return list<array{id: string}> */
+    private function dependencies(ScriptModule $asset): array
+    {
+        $dependencies = [];
+
+        foreach ($asset->dependencies() as $dependency) {
+            if ($dependency === '') {
+                continue;
+            }
+
+            $dependencies[] = ['id' => $dependency];
+        }
+
+        return $dependencies;
     }
 }

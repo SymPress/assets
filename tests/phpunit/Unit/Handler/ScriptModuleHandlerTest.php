@@ -46,7 +46,13 @@ class ScriptModuleHandlerTest extends AbstractTestCase
                 ): void {
                     static::assertSame('@my-plugin/module', $id);
                     static::assertSame('module.js', $src);
-                    static::assertSame(['@wordpress/interactivity', '@wordpress/element'], $deps);
+                    static::assertSame(
+                        [
+                            ['id' => '@wordpress/interactivity'],
+                            ['id' => '@wordpress/element'],
+                        ],
+                        $deps,
+                    );
                     static::assertSame('1.0.0', $version);
                 },
             );
