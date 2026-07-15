@@ -30,7 +30,7 @@ final class AssetManager
 
     /**
      * @var array<
-     *      Style::class|Script::class|ScriptModule::class,
+     *      class-string<Asset>,
      *      array<string, array<string, mixed>>
      * >
      */
@@ -131,7 +131,7 @@ final class AssetManager
     }
 
     /**
-     * @param class-string         $type
+     * @param class-string<Asset>  $type
      * @param array<string, mixed> $extensions
      * @return $this
      */
@@ -153,7 +153,7 @@ final class AssetManager
     }
 
     /**
-     * @param class-string $type
+     * @param class-string<Asset> $type
      * @return array<string, mixed>
      */
     public function assetExtensions(string $handle, string $type): array
