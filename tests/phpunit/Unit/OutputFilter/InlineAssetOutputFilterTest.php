@@ -141,6 +141,16 @@ class InlineAssetOutputFilterTest extends AbstractTestCase
         static::assertStringNotContainsString('bad attr=', $result);
     }
 
+    public function testInvalidUtf8StaysExternalAndKeepsTheOriginalFileBytes(): void
+    {
+        $bytes = "//\xff<!--<script>\nwindow.probe=true;";
+        $filePath = $this->writeFile('invalid-utf8.js', $bytes);
+        $asset = (new Script('invalid-utf8', 'https://localhost.com/invalid-utf8.js'))->withFilePath($filePath);
+        $original = '<script src="https://localhost.com/invalid-utf8.js"></script>';
+        static::assertSame($original, $this->filterForRoot()($original, $asset));
+        static::assertSame($bytes, file_get_contents($filePath));
+    }
+
     public function testHazardousScriptStaysExternalWithoutChangingStringOrTaggedTemplateSemantics(): void
     {
         $filePath = $this->writeFile('script.js', 'window.x = "</script><script>alert(1)</script>";');
