@@ -81,9 +81,8 @@ class AbstractWebpackLoaderTest extends AbstractTestCase
 
     /**
      * @test
-     *
-     * @dataProvider provideAssetLocations
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAssetLocations')]
     public function testResolveLocations(string $inputFile, int $expectedLocation): void
     {
         $loader = new class extends AbstractWebpackLoader {

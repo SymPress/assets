@@ -56,8 +56,8 @@ class ScriptTest extends AbstractTestCase
 
     /**
      * @test
-     * @dataProvider provideLocalized
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideLocalized')]
     public function testWithLocalize(string $objectName, $objectValue, $expected): void
     {
         $script = new Script('handle', 'script.js');
@@ -229,8 +229,8 @@ class ScriptTest extends AbstractTestCase
 
     /**
      * @test
-     * @dataProvider provideAssetsFile
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAssetsFile')]
     public function testDependencyExtractionPlugin(
         string $scriptFile,
         string $depsFileName,
@@ -366,8 +366,8 @@ class ScriptTest extends AbstractTestCase
 
     /**
      * @test
-     * @dataProvider provideVersions
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideVersions')]
     public function testDependencyExtractionPluginWithVersion(
         ?string $withVersion,
         string $dependencyExtractionPluginVersion,
