@@ -8,6 +8,7 @@ use SymPress\Assets\CacheOptimization\CacheOptimizationAwareAsset;
 use SymPress\Assets\CacheOptimization\CacheOptimizationExclusion;
 use SymPress\Assets\Performance\ResourceHint;
 use SymPress\Assets\Performance\ResourceHintAwareAsset;
+use SymPress\Assets\Security\IntegrityMetadata;
 
 final readonly class AssetConfigurationApplier
 {
@@ -47,6 +48,9 @@ final readonly class AssetConfigurationApplier
         }
 
         $this->applyMappedConfig($asset, $config, $propertyMap);
+        if ($asset instanceof FilterAwareAsset) {
+            IntegrityMetadata::apply($asset, $config['integrity'] ?? null, $config['crossorigin'] ?? null);
+        }
         $this->applyDependencies($asset, $config['dependencies'] ?? null);
         $this->applyCacheOptimizationConfig($asset, $config['cacheOptimization'] ?? null);
         $this->applyResourceHintsConfig($asset, $config['resourceHints'] ?? null);

@@ -19,16 +19,16 @@ final readonly class JsonFileReader
     {
         $resource = $this->readableFile($resource);
 
-        $contents = file_get_contents($resource);
+        $contents = \SymPress\Assets\IO\RequestFiles::shared()->contents($resource);
 
-        if ($contents === false) {
+        if ($contents === null) {
             throw new FileNotFoundException(
                 sprintf('The given file "%s" does not exist or is not readable.', esc_html($resource)),
             );
         }
 
         try {
-            $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
+            $data = \SymPress\Assets\IO\RequestFiles::shared()->remember('json:' . $resource, static fn (): mixed => json_decode($contents, true, flags: JSON_THROW_ON_ERROR));
         } catch (\JsonException $exception) {
             throw new InvalidResourceException(
                 sprintf('Error parsing JSON - %s', esc_html($exception->getMessage())),
@@ -56,7 +56,7 @@ final readonly class JsonFileReader
     #[\NoDiscard]
     public function readableFile(mixed $resource): string
     {
-        if (is_string($resource) && is_readable($resource)) {
+        if (is_string($resource) && \SymPress\Assets\IO\RequestFiles::shared()->info($resource)['readable']) {
             return $resource;
         }
 

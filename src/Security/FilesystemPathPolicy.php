@@ -105,6 +105,6 @@ final readonly class FilesystemPathPolicy
 
     private static function canonicalPath(string $path): ?string
     {
-        return FilesystemPath::canonical($path);
+        return \SymPress\Assets\IO\RequestFiles::shared()->info($path)['canonical'];
     }
 }

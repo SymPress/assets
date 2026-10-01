@@ -141,7 +141,7 @@ class InlineAssetOutputFilterTest extends AbstractTestCase
         static::assertStringNotContainsString('bad attr=', $result);
     }
 
-    public function testInlineScriptEscapesClosingScriptSequence(): void
+    public function testHazardousScriptStaysExternalWithoutChangingStringOrTaggedTemplateSemantics(): void
     {
         $filePath = $this->writeFile('script.js', 'window.x = "</script><script>alert(1)</script>";');
 
@@ -154,7 +154,7 @@ class InlineAssetOutputFilterTest extends AbstractTestCase
         );
 
         static::assertStringNotContainsString('</script><script>alert(1)', $result);
-        static::assertStringContainsString('<\/script><script>alert(1)<\/script>', $result);
+        static::assertSame('<script src="https://localhost.com/script.js"></script>', $result);
     }
 
     /** @test */

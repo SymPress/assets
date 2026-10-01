@@ -6,6 +6,7 @@ namespace SymPress\Assets;
 
 use SymPress\Assets\Exception\InvalidResourceException;
 use SymPress\Assets\Loader\JsonFileReader;
+use SymPress\Assets\IO\RequestFiles;
 use SymPress\Assets\Security\DependencyFilePolicy;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\Finder;
@@ -56,9 +57,7 @@ trait DependencyExtractionTrait
         if ($this->resolvedDependencyExtractionPlugin) {
             return false;
         }
-        $depsFile = $this->findDependencyFile(
-            new DependencyFilePolicy($this->phpDependencyFilesAllowed, $this->dependencyFileMaxBytes),
-        );
+        $depsFile = $this->findDependencyFile();
         $this->resolvedDependencyExtractionPlugin = true;
 
         if (!$depsFile) {
@@ -70,6 +69,9 @@ trait DependencyExtractionTrait
             ? (new JsonFileReader())->read($depsFilePath)
             : $this->loadPhpDependencyFile($depsFilePath);
 
+        if ($this instanceof FilterAwareAsset) {
+            \SymPress\Assets\Security\IntegrityMetadata::apply($this, $data['integrity'] ?? null, $data['crossorigin'] ?? null);
+        }
         $dependencies = $this->normalizeDependencyHandles($data['dependencies'] ?? []);
         $version = $this->normalizeDependencyVersion($data['version'] ?? null);
 
@@ -97,6 +99,18 @@ trait DependencyExtractionTrait
     }
 
     protected function findDependencyFile(?DependencyFilePolicy $policy = null): ?\SplFileInfo
+    {
+        // Explicit policy objects may have a different trust/size boundary; do not reuse their result.
+        if ($policy !== null) {
+            return $this->scanDependencyFile($policy);
+        }
+        return RequestFiles::shared()->remember(
+            'dependency:' . $this->filePath() . ':' . (int) $this->phpDependencyFilesAllowed . ':' . $this->dependencyFileMaxBytes,
+            fn (): ?\SplFileInfo => $this->scanDependencyFile(),
+        );
+    }
+
+    private function scanDependencyFile(?DependencyFilePolicy $policy = null): ?\SplFileInfo
     {
         $policy ??= new DependencyFilePolicy($this->phpDependencyFilesAllowed, $this->dependencyFileMaxBytes);
 
@@ -169,7 +183,7 @@ trait DependencyExtractionTrait
         ?DependencyFilePolicy $policy = null,
     ): ?\SplFileInfo {
 
-        if (!is_file($filePath)) {
+        if (!RequestFiles::shared()->info($filePath)['file']) {
             return null;
         }
 

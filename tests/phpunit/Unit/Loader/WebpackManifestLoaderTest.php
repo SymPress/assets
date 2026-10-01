@@ -50,6 +50,17 @@ class WebpackManifestLoaderTest extends AbstractTestCase
         static::assertInstanceOf($expectedClass, $asset);
     }
 
+    public function testBuildIntegrityMetadataPropagatesThroughManifestLoader(): void
+    {
+        // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Trusted fixture SRI bytes, never executable content.
+        $hash = 'sha256-' . base64_encode(hash('sha256', 'built bytes', true));
+        $json = json_encode(['secure' => ['filePath' => 'secure.js', 'integrity' => $hash, 'crossorigin' => 'anonymous']], JSON_THROW_ON_ERROR);
+        $assets = (new WebpackManifestLoader())->load($this->mockManifestJson($json));
+        self::assertInstanceOf(Script::class, $assets[0]);
+        self::assertSame($hash, $assets[0]->attributes()['integrity']);
+        self::assertSame('anonymous', $assets[0]->attributes()['crossorigin']);
+    }
+
     /** @test */
     public function testLoadFromManifestMultipleAssets(): void
     {

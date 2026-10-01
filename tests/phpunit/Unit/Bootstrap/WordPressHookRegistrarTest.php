@@ -39,11 +39,8 @@ final class WordPressHookRegistrarTest extends TestCase
     #[Test]
     public function itRegistersFallbackHookWhenWordPressHookApiIsUnavailable(): void
     {
-        if (function_exists('add_action')) {
-            self::markTestSkipped('WordPress hook API is already available.');
-        }
-
-        (new WordPressHookRegistrar())->register(__METHOD__, 13);
+        $hookApi = new RecordingWordPressHookApi(available: false, loadable: false);
+        (new WordPressHookRegistrar($hookApi))->register(__METHOD__, 13);
 
         self::assertSame(
             [

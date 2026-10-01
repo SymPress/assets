@@ -15,6 +15,7 @@ abstract class AbstractTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        \SymPress\Assets\IO\RequestFiles::reset();
         Monkey\setUp();
     }
 

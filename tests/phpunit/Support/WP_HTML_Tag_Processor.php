@@ -61,8 +61,14 @@ if (!class_exists('WP_HTML_Tag_Processor')) {
                 return;
             }
 
+            $this->remove_attribute($name);
             $attribute = sprintf(' %s="%s"', $name, $value);
             $this->updatedTag = preg_replace('/\s*\/?>$/', $attribute . '$0', $this->updatedTag) ?? $this->updatedTag;
+        }
+
+        public function remove_attribute(string $name): void
+        {
+            $this->updatedTag = preg_replace('/\s' . preg_quote($name, '/') . '(?:=(?:"[^"]*"|\'[^\']*\'|[^\s>]+))?/i', '', $this->updatedTag) ?? $this->updatedTag;
         }
 
         public function get_updated_html(): string
