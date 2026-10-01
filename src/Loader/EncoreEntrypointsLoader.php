@@ -14,6 +14,26 @@ use Symfony\Component\Filesystem\Path;
 class EncoreEntrypointsLoader extends AbstractWebpackLoader implements LoaderInterface
 {
     /**
+     * Load local files only, confined to the manifest directory.
+     *
+     * @return array<Asset>
+     */
+    public function fromFile(string $file): array
+    {
+        $entries = EncoreManifest::read($file);
+        return $entries === null ? [] : $this->loadFromArray(['entrypoints' => $entries], $file);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function editorStyles(string $file, string $entry, string $prefix = 'build/'): array
+    {
+        $entries = EncoreManifest::read($file);
+        return array_map(static fn (string $css): string => $prefix . preg_replace('~^\\./~', '', $css), $entries[$entry]['css'] ?? []);
+    }
+
+    /**
      * Load an already decoded and validated Encore manifest without reading it again.
      * The resource path anchors relative asset paths; the manifest need not exist.
      * File access and inline-content policies still apply when assets are consumed.
@@ -33,7 +53,9 @@ class EncoreEntrypointsLoader extends AbstractWebpackLoader implements LoaderInt
     protected function parseData(array $data, string $resource): array
     {
         $directory = Path::getDirectory($resource);
-        /** @var array{entrypoints:array{css?:array<string>, js?:array<string>}} $data */
+        /**
+     * @var array{entrypoints:array{css?:array<string>, js?:array<string>}} $data
+     */
         $data = $data['entrypoints'] ?? [];
 
         $assets = [];
