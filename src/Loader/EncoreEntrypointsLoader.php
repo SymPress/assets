@@ -14,6 +14,20 @@ use Symfony\Component\Filesystem\Path;
 class EncoreEntrypointsLoader extends AbstractWebpackLoader implements LoaderInterface
 {
     /**
+     * Load an already decoded and validated Encore manifest without reading it again.
+     * The resource path anchors relative asset paths; the manifest need not exist.
+     * File access and inline-content policies still apply when assets are consumed.
+     *
+     * @param array{entrypoints?: array<string, array{css?: list<string>, js?: list<string>}>} $data
+     * @return array<Asset>
+     */
+    #[\NoDiscard]
+    public function loadFromArray(array $data, string $resource): array
+    {
+        return $this->parseData($data, $resource);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function parseData(array $data, string $resource): array

@@ -86,7 +86,7 @@ class StyleTest extends AbstractTestCase
         static::assertSame([], $testee->filters());
     }
 
-    /** @dataProvider provideCssVars */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideCssVars')]
     public function testWithCssVars(string $element, array $cssVars, array $expected): void
     {
         $testee = new Style('handle', 'foo.css');

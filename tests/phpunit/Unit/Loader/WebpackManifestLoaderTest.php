@@ -25,8 +25,8 @@ class WebpackManifestLoaderTest extends AbstractTestCase
 
     /**
      * @test
-     * @dataProvider provideManifest
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideManifest')]
     public function testLoadFromManifest(
         string $json,
         string $expectedHandle,
@@ -130,8 +130,8 @@ class WebpackManifestLoaderTest extends AbstractTestCase
 
     /**
      * @test
-     * @dataProvider provideManifestWithAlternativeUrl
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideManifestWithAlternativeUrl')]
     public function testLoadFromManifestWithAlternativeUrl(
         string $json,
         string $alternativeUrl,

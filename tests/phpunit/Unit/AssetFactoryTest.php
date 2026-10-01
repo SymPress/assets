@@ -72,9 +72,8 @@ class AssetFactoryTest extends AbstractTestCase
 
     /**
      * @test
-     *
-     * @dataProvider provideDependencies
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDependencies')]
     public function testDependencies($input, array $expected): void
     {
         $asset = AssetFactory::create(
@@ -252,9 +251,8 @@ class AssetFactoryTest extends AbstractTestCase
 
     /**
      * @test
-     *
-     * @dataProvider provideInvalidConfig
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidConfig')]
     public function testInvalidConfig(array $config, string $expectedExceptionType): void
     {
         \Brain\Monkey\Functions\when('esc_html')->returnArg();
@@ -414,9 +412,7 @@ FILE;
         ];
     }
 
-    /**
-     * @dataProvider provideConfigWithTranslation
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideConfigWithTranslation')]
     public function testCreateWithTranslation(array $config, array $expected): void
     {
         /** @var Script $asset */
@@ -474,9 +470,7 @@ FILE;
         ];
     }
 
-    /**
-     * @dataProvider provideConfigWithLocalize
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideConfigWithLocalize')]
     public function testCreateWithLocalize(array $config, array $expected): void
     {
         /** @var Script $asset */

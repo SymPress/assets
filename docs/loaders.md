@@ -62,6 +62,27 @@ $assets = (new EncoreEntrypointsLoader())
 Chunks from an entrypoint are registered in the correct order with
 dependencies.
 
+Call `loadFromArray()` when the application has already decoded and validated
+the manifest, for example after filtering invalid optional entrypoints:
+
+```php
+$assets = (new EncoreEntrypointsLoader())
+    ->withDirectoryUrl('https://example.com/theme/build/')
+    ->loadFromArray([
+        'entrypoints' => [
+            'theme' => ['css' => ['css/app.css'], 'js' => ['js/app.js']],
+        ],
+    ], __DIR__ . '/build/entrypoints.json');
+```
+
+The second argument supplies the manifest path used to resolve asset paths. It
+does not trigger a file read and the manifest need not exist. The caller must
+validate the input shape and apply any application-specific path restrictions.
+The loader preserves the file loader's handles, chunk dependencies, URL mapping
+and version-discovery settings. Existing file-access and inline-content policies
+still apply when the assets are consumed. Consumers do not need to subclass the
+loader or call its protected parsing method.
+
 ## Array Loader
 
 ```php

@@ -67,8 +67,8 @@ class AssetHookResolverTest extends AbstractTestCase
 
     /**
      * @test
-     * @dataProvider provideLastHook
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideLastHook')]
     public function testResolveLastHook(ContextStub $context, $expected): void
     {
         $hookResolver = new AssetHookResolver($context);
