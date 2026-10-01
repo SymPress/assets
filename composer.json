@@ -92,15 +92,6 @@
             "phpstan/extension-installer": true
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "./../*",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "suggest": {
         "sympress/kernel": "Enables the optional Symfony-kernel bundle integration."
     },
