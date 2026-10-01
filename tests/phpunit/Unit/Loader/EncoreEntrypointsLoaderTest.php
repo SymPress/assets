@@ -80,6 +80,40 @@ class EncoreEntrypointsLoaderTest extends AbstractTestCase
         static::assertSame(['theme', 'theme-1'], $asset->dependencies());
     }
 
+    public function testLoadFromArrayPreservesPathsAndChunkDependenciesWithoutReadingManifest(): void
+    {
+        $loader = (new EncoreEntrypointsLoader())->withDirectoryUrl('https://example.com/build/');
+        $data = [
+            'entrypoints' => [
+                'theme' => [
+                    'css' => ['css/theme.css'],
+                    'js' => ['js/runtime.js', 'js/theme.js'],
+                ],
+            ],
+        ];
+        $assets = $loader->loadFromArray($data, '/theme/build/missing-entrypoints.json');
+
+        static::assertCount(3, $assets);
+        static::assertInstanceOf(Style::class, $assets[0]);
+        static::assertInstanceOf(Script::class, $assets[1]);
+        static::assertSame('https://example.com/build/css/theme.css', $assets[0]->url());
+        static::assertSame('/theme/build/css/theme.css', $assets[0]->filePath());
+        static::assertSame('/theme/build/js/theme.js', $assets[2]->filePath());
+        static::assertSame('https://example.com/build/js/theme.js', $assets[2]->url());
+        static::assertSame('theme-1', $assets[2]->handle());
+        static::assertSame(['theme'], $assets[2]->dependencies());
+        static::assertSame([], $loader->loadFromArray([], '/theme/build/entrypoints.json'));
+    }
+
+    public function testLoadFromArrayMatchesFileLoader(): void
+    {
+        $data = ['entrypoints' => ['theme' => ['js' => ['./theme.js']]]];
+        $file = $this->mockEntrypointsFile($data);
+        $loader = new EncoreEntrypointsLoader();
+
+        static::assertEquals($loader->load($file), $loader->loadFromArray($data, $file));
+    }
+
     private function mockEntrypointsFile(array $json): string
     {
         return vfsStream::newFile('entrypoints.json')
