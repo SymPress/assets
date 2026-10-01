@@ -38,7 +38,7 @@ final class InlineAssetOutputFilter implements AssetOutputFilter
 
         if ($asset instanceof Script) {
             // Raw programs cannot be rewritten safely in every string, regexp or tagged-template parser state.
-            if (preg_match('~</script|<!--|<script|[\x{2028}\x{2029}]~iu', $content) === 1) {
+            if (preg_match('~</script|<!--|<script|[\x{2028}\x{2029}]~iu', $content) !== 0) {
                 return $html;
             }
             return sprintf(
