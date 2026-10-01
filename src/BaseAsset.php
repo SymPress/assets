@@ -7,6 +7,7 @@ namespace SymPress\Assets;
 use SymPress\Assets\CacheOptimization\CacheOptimizationAwareAsset;
 use SymPress\Assets\CacheOptimization\CacheOptimizationAwareTrait;
 use SymPress\Assets\Handler\AssetHandler;
+use SymPress\Assets\IO\RequestFiles;
 use SymPress\Assets\Performance\ResourceHintAwareAsset;
 use SymPress\Assets\Performance\ResourceHintAwareTrait;
 use SymPress\Assets\Util\AssetPathResolver;
@@ -118,11 +119,12 @@ abstract class BaseAsset implements Asset, CacheOptimizationAwareAsset, Resource
         if ($version === null && $this->autodiscoverVersion) {
             $filePath = $this->filePath();
 
-            if ($filePath === '' || !is_file($filePath)) {
+            $info = RequestFiles::shared()->info($filePath);
+            if ($filePath === '' || !$info['file']) {
                 return null;
             }
 
-            $version = (string) filemtime($filePath);
+            $version = (string) $info['modified'];
             $this->withVersion($version);
 
             return $version;

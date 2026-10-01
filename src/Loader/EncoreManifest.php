@@ -13,15 +13,15 @@ final class EncoreManifest
      */
     public static function read(string $file): ?array
     {
-        if (!is_readable($file)) {
+        if (!\SymPress\Assets\IO\RequestFiles::shared()->info($file)['readable']) {
             return null;
         }
-        $contents = file_get_contents($file);
-        if ($contents === false) {
+        $contents = \SymPress\Assets\IO\RequestFiles::shared()->contents($file);
+        if ($contents === null) {
             return null;
         }
         try {
-            $manifest = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+            $manifest = \SymPress\Assets\IO\RequestFiles::shared()->remember('json:' . $file, static fn (): mixed => json_decode($contents, true, 512, JSON_THROW_ON_ERROR));
         } catch (\JsonException) {
             return null;
         }

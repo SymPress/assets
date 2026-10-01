@@ -13,9 +13,6 @@ final class InlineAssetOutputFilter implements AssetOutputFilter
 {
     private readonly InlineAssetPolicy $policy;
 
-    /** @var array<string, string|null> */
-    private array $contentsByFile = [];
-
     public function __construct(?InlineAssetPolicy $policy = null)
     {
         $this->policy = $policy ?? InlineAssetPolicy::fromWordPressEnvironment();
@@ -35,11 +32,15 @@ final class InlineAssetOutputFilter implements AssetOutputFilter
         }
 
         $content = $this->fileContent($filePath);
-        if ($content === null) {
+        if ($content === null || !$this->policy->allowsContent($content)) {
             return $html;
         }
 
         if ($asset instanceof Script) {
+            // Raw programs cannot be rewritten safely in every string, regexp or tagged-template parser state.
+            if (preg_match('~</script|<!--|<script|[\x{2028}\x{2029}]~iu', $content) === 1) {
+                return $html;
+            }
             return sprintf(
                 '<script%1$s>%2$s</script>',
                 $this->attributes($asset, ['src', 'href', 'rel', 'integrity', 'defer', 'async', 'as']),
@@ -60,16 +61,7 @@ final class InlineAssetOutputFilter implements AssetOutputFilter
 
     private function fileContent(string $filePath): ?string
     {
-        $modifiedAt = @filemtime($filePath);
-        $cacheKey = sprintf('%s:%s', $filePath, $modifiedAt === false ? 'unknown' : (string) $modifiedAt);
-        if (array_key_exists($cacheKey, $this->contentsByFile)) {
-            return $this->contentsByFile[$cacheKey];
-        }
-
-        $content = file_get_contents($filePath);
-        $this->contentsByFile[$cacheKey] = $content === false ? null : $content;
-
-        return $this->contentsByFile[$cacheKey];
+        return \SymPress\Assets\IO\RequestFiles::shared()->contents($filePath);
     }
 
     /** @param list<string> $excludedAttributes */
@@ -87,9 +79,9 @@ final class InlineAssetOutputFilter implements AssetOutputFilter
 
     private function safeRawText(string $content, string $tagName): string
     {
-        return preg_replace(
+        return preg_replace_callback(
             sprintf('/<\\/%s/i', preg_quote($tagName, '/')),
-            '<\/' . $tagName,
+            static fn (array $match): string => '<\\/' . substr($match[0], 2),
             $content,
         ) ?? $content;
     }

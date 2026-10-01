@@ -43,9 +43,15 @@ final readonly class InlineAssetPolicy
         );
     }
 
+    public function allowsContent(string $content): bool
+    {
+        return strlen($content) <= $this->maxBytes;
+    }
+
     public function allows(Asset $asset, string $filePath): bool
     {
-        if (!is_file($filePath) || !is_readable($filePath)) {
+        $info = \SymPress\Assets\IO\RequestFiles::shared()->info($filePath);
+        if (!$info['file'] || !$info['readable']) {
             return false;
         }
 
@@ -53,7 +59,7 @@ final readonly class InlineAssetPolicy
             return false;
         }
 
-        $size = filesize($filePath);
+        $size = $info['size'];
         if (!is_int($size) || $size > $this->maxBytes) {
             return false;
         }

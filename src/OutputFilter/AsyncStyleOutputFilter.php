@@ -8,88 +8,30 @@ use SymPress\Assets\FilterAwareAsset;
 
 class AsyncStyleOutputFilter implements AssetOutputFilter
 {
-    private const string LOAD_STYLESHEET_ON_LOAD = "this.onload=null;this.rel='stylesheet'";
+    public const string NONCE_FILTER = 'sympress_assets_csp_nonce';
 
     public function __invoke(string $html, FilterAwareAsset $asset): string
     {
-        $attributes = [
-            ...$this->linkAttributes($html, $asset),
-            ...$asset->attributes(),
-            'rel'    => 'preload',
-            'as'     => 'style',
-            'onload' => self::LOAD_STYLESHEET_ON_LOAD,
-        ];
-
-        unset($attributes['id']);
-
-        return sprintf(
-            '<link%1$s><noscript>%2$s</noscript>',
-            HtmlAttributes::render($attributes),
-            $html,
-        );
-    }
-
-    /** @return array<string, string|true> */
-    private function linkAttributes(string $html, FilterAwareAsset $asset): array
-    {
-        $attributes = $this->parseAttributes($html);
-        $href = $attributes['href'] ?? $this->assetUrl($asset);
-
-        return [
-            ...$attributes,
-            'href' => esc_url((string) $href),
-        ];
-    }
-
-    private function assetUrl(FilterAwareAsset $asset): string
-    {
-        $url = $asset->url();
-        $version = $asset->version();
-
-        return $version
-            ? add_query_arg('ver', $version, $url)
-            : $url;
-    }
-
-    /** @return array<string, string|true> */
-    private function parseAttributes(string $html): array
-    {
-        if (preg_match('/<link\b(?<attributes>[^>]*)>/i', $html, $tag) !== 1) {
-            return [];
+        $nonce = function_exists('apply_filters') ? apply_filters(self::NONCE_FILTER, null, $asset) : null;
+        if (!is_string($nonce) || $nonce === '' || !class_exists(\WP_HTML_Tag_Processor::class)) {
+            return $html;
         }
-
-        $attributes = [];
-
-        if (
-            preg_match_all(
-                '/\s(?<name>[A-Za-z_:][A-Za-z0-9:_.-]*)\s*=\s*(["\'])(?<value>.*?)\2/s',
-                (string) $tag['attributes'],
-                $matches,
-                PREG_SET_ORDER,
-            )
-        ) {
-            foreach ($matches as $match) {
-                $attributes[(string) $match['name']] = html_entity_decode(
-                    (string) $match['value'],
-                    ENT_QUOTES | ENT_HTML5,
-                    'UTF-8',
-                );
-            }
+        $tags = new \WP_HTML_Tag_Processor($html);
+        if (!$tags->next_tag(['tag_name' => 'LINK'])) {
+            return $html;
         }
-
-        if (
-            preg_match_all(
-                '/\s(?<name>[A-Za-z_:][A-Za-z0-9:_.-]*)(?=\s|$)/',
-                preg_replace('/\s[A-Za-z_:][A-Za-z0-9:_.-]*\s*=\s*(["\']).*?\1/s', '', (string) $tag['attributes']) ?? '',
-                $matches,
-                PREG_SET_ORDER,
-            )
-        ) {
-            foreach ($matches as $match) {
-                $attributes[(string) $match['name']] ??= true;
-            }
-        }
-
-        return $attributes;
+        $id = 'sympress-async-' . bin2hex(random_bytes(8));
+        HtmlAttributes::applyToTag($tags, $asset->attributes(), ['id', 'rel', 'as', 'onload']);
+        $tags->set_attribute('id', $id);
+        $tags->set_attribute('rel', 'preload');
+        $tags->set_attribute('as', 'style');
+        $tags->remove_attribute('onload');
+        $identifier = json_encode($id, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_THROW_ON_ERROR);
+        $script = '(function(){const link=document.getElementById(' . $identifier . ');'
+            . 'if(!link)return;const activate=()=>{link.rel="stylesheet";};'
+            . 'link.addEventListener("load",activate,{once:true});'
+            . 'if(link.sheet||(window.performance&&performance.getEntriesByName(link.href).some(e=>e.responseEnd>0)))activate();})();';
+        // A completed Resource Timing entry handles a preload event that fired before this script.
+        return $tags->get_updated_html() . '<script' . HtmlAttributes::render(['nonce' => $nonce]) . '>' . $script . '</script><noscript>' . $html . '</noscript>';
     }
 }

@@ -18,6 +18,14 @@ class AsyncStyleOutputFilterTest extends AbstractTestCase
         static::assertInstanceOf(AssetOutputFilter::class, new AsyncStyleOutputFilter());
     }
 
+    public function testMissingNonceKeepsStylesheetWithoutInlineHandlers(): void
+    {
+        Monkey\Functions\when('apply_filters')->justReturn(null);
+        $asset = \Mockery::mock(FilterAwareAsset::class);
+        $html = '<link rel="stylesheet" href="app.css">';
+        self::assertSame($html, (new AsyncStyleOutputFilter())($html, $asset));
+    }
+
     /** @test */
     public function testRender(): void
     {
@@ -27,6 +35,7 @@ class AsyncStyleOutputFilterTest extends AbstractTestCase
         $input = '<link rel="stylesheet" id="app-css" href="' . $expectedUrl
             . '" media="screen" integrity="sha384-test" crossorigin="anonymous" fetchpriority="high">';
 
+        Monkey\Functions\when('apply_filters')->justReturn('nonce-test');
         Monkey\Functions\when('esc_url')->returnArg();
         Monkey\Functions\when('esc_attr')->returnArg();
 
@@ -47,6 +56,7 @@ class AsyncStyleOutputFilterTest extends AbstractTestCase
         static::assertIsString($preloadTag);
         static::assertStringNotContainsString('id="app-css"', $preloadTag);
         static::assertStringContainsString("<noscript>{$input}</noscript>", $output);
-        static::assertStringNotContainsString('<script>', $output);
+        static::assertStringContainsString('<script nonce="nonce-test">', $output);
+        static::assertStringNotContainsString('onload=', $output);
     }
 }

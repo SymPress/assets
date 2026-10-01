@@ -29,6 +29,8 @@ use SymPress\Assets\Performance\ResourceHint;
  *     location?: AssetLocation,
  *     condition?: string,
      *     attributes?: array<string, string|bool>,
+     *     integrity?: string,
+     *     crossorigin?: string,
      *     cacheOptimization?: bool|CacheOptimizationExclusion|null,
      *     resourceHints?: array<int, ResourceHint|array<string, mixed>>,
      *     dependencyExtractionEnabled?: bool,
