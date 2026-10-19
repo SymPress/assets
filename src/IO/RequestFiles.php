@@ -50,7 +50,7 @@ final class RequestFiles
             ++$this->observations;
             clearstatcache(true, $path);
             $canonical = realpath($path);
-            $stat = @stat($path);
+            $stat = file_exists($path) ? @stat($path) : false;
             return [
                 'canonical' => $canonical === false ? null : $canonical,
                 'size' => $stat === false ? 0 : $stat['size'],

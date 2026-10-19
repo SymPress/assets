@@ -68,7 +68,8 @@ integrity from URLs/versions or fetch remote files; no remote integrity guarante
 is possible without supplied build metadata. Inline tags omit external integrity.
 
 RequestFiles shares canonical path/stat/content/JSON snapshots across assets and
-loaders. Repeated reads and missing paths reuse a request snapshot, while allowed
+loaders. Probing missing optional files leaves PHP's last-error state unchanged.
+Repeated reads and missing paths reuse a request snapshot, while allowed
 root policy decisions remain local to their policy context. Call
 SymPress\Assets\IO\RequestFiles::reset() at **every** request boundary in a
 long-running worker, and recreate per-request asset objects. Normal PHP request
