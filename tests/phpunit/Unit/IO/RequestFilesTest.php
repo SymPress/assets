@@ -13,6 +13,48 @@ use SymPress\Assets\Tests\Unit\AbstractTestCase;
 
 final class RequestFilesTest extends AbstractTestCase
 {
+    public function testMissingFileDoesNotLeaveAWarningForWordPress(): void
+    {
+        $path = sys_get_temp_dir() . '/assets-missing-' . bin2hex(random_bytes(5)) . '.asset.json';
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- Exercise PHP's native last-error state, not PHPUnit's handler.
+        set_error_handler(static fn (): bool => false);
+        try {
+            error_clear_last();
+            $info = RequestFiles::shared()->info($path);
+            $error = error_get_last();
+        } finally {
+            restore_error_handler();
+            error_clear_last();
+        }
+        self::assertNull($error);
+        self::assertSame([
+            'canonical' => null,
+            'size' => 0,
+            'modified' => 0,
+            'readable' => false,
+            'file' => false,
+        ], $info);
+    }
+
+    public function testMissingFilePreservesAnExistingPhpError(): void
+    {
+        $path = sys_get_temp_dir() . '/assets-missing-' . bin2hex(random_bytes(5)) . '.asset.json';
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- Exercise PHP's native last-error state, not PHPUnit's handler.
+        set_error_handler(static fn (): bool => false);
+        try {
+            // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.PHP.DevelopmentFunctions.error_log_trigger_error -- Seed a pre-existing warning without printing test output.
+            @trigger_error('Existing application warning', E_USER_WARNING);
+            $before = error_get_last();
+            RequestFiles::shared()->info($path);
+            $after = error_get_last();
+        } finally {
+            restore_error_handler();
+            error_clear_last();
+        }
+        self::assertNotNull($before);
+        self::assertSame($before, $after);
+    }
+
     public function testRepeatedReadsAndNegativePathsShareSnapshotUntilRequestReset(): void
     {
         $directory = sys_get_temp_dir() . '/assets-snapshot-' . bin2hex(random_bytes(5));
