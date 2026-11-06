@@ -19,7 +19,7 @@
         "php": "^8.5",
         "ext-dom": "*",
         "ext-json": "*",
-        "symfony/filesystem": "^8.0",
+        "symfony/filesystem": "^8.1.11",
         "symfony/finder": "^8.0"
     },
     "require-dev": {

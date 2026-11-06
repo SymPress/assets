@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 where applicable.
 
+## 1.2.4 - 2026-11-06
+
+- Require Symfony Filesystem 8.1.11 or later for asset path normalization (GHSA-6prc-h956-hxjq).
+
 ## 1.2.3 - 2026-10-19
 
 ### Fixed
