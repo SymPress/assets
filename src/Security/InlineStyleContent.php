@@ -12,8 +12,11 @@ final readonly class InlineStyleContent
 
     private const string SELECTOR_CONTROL_PATTERN = '/[<{}]/';
 
-    // Characters that could end the declaration or rule, open markup, or smuggle them in as CSS escapes.
-    private const string CUSTOM_PROPERTY_VALUE_CONTROL_PATTERN = '/[{};<\\\\\x00-\x1F\x7F]/';
+    // Never { } < \ or control characters (rule break-out, markup, CSS escapes); ";" only inside
+    // closed quoted strings such as data URIs, where it cannot end the declaration.
+    private const string CUSTOM_PROPERTY_VALUE_PATTERN = '/^(?:[^"\';{}<\\\\\x00-\x1F\x7F]'
+        . '|"[^"{}<\\\\\x00-\x1F\x7F]*"'
+        . '|\'[^\'{}<\\\\\x00-\x1F\x7F]*\')*$/D';
 
     public static function safeRawText(string $css): string
     {
@@ -52,7 +55,7 @@ final readonly class InlineStyleContent
 
         $value = (string) $value;
 
-        if (preg_match(self::CUSTOM_PROPERTY_VALUE_CONTROL_PATTERN, $value) === 1) {
+        if (preg_match(self::CUSTOM_PROPERTY_VALUE_PATTERN, $value) !== 1) {
             throw new \InvalidArgumentException(sprintf('Invalid CSS custom property value "%s".', $value));
         }
 
