@@ -144,14 +144,42 @@ class StyleTest extends AbstractTestCase
         (new Style('handle', 'foo.css'))->withCssVars('</style><script>', ['white' => '#fff']);
     }
 
-    public function testCssVarsEscapeClosingStyleTags(): void
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideUnsafeCssVarValues')]
+    public function testCssVarsRejectValuesThatLeaveTheDeclaration(string $value): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        (new Style('handle', 'foo.css'))->withCssVars(':root', ['brand' => $value]);
+    }
+
+    /** @return \Generator<string, array{string}> */
+    public static function provideUnsafeCssVarValues(): \Generator
+    {
+        yield 'rule break-out' => ['red;}body{background:url(//attacker.test/leak)}.y{--z:0'];
+        yield 'semicolon' => ['red;color:blue'];
+        yield 'opening brace' => ['{'];
+        yield 'closing brace' => ['}'];
+        yield 'closing style tag' => ['</style><script>alert(1)</script>'];
+        yield 'escape sequence' => ['\\7d'];
+        yield 'newline' => ["red\n"];
+        yield 'carriage return' => ["red\r"];
+        yield 'form feed' => ["red\f"];
+    }
+
+    public function testCssVarsKeepRegularValues(): void
     {
         $testee = new Style('handle', 'foo.css');
 
-        $testee->withCssVars(':root', ['text' => '</style><script>alert(1)</script>']);
+        $testee->withCssVars(':root', [
+            'font' => '"Inter", sans-serif',
+            'shadow' => '0 1px 2px rgb(0 0 0 / 50%)',
+            'image' => 'url("https://example.test/a.png")',
+            'size' => 12,
+        ]);
 
         static::assertSame(
-            ':root{--text:<\/style><script>alert(1)</script>;}',
+            ':root{--font:"Inter", sans-serif;--shadow:0 1px 2px rgb(0 0 0 / 50%);'
+            . '--image:url("https://example.test/a.png");--size:12;}',
             $testee->cssVarsAsString(),
         );
     }

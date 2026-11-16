@@ -12,6 +12,9 @@ final readonly class InlineStyleContent
 
     private const string SELECTOR_CONTROL_PATTERN = '/[<{}]/';
 
+    // Characters that could end the declaration or rule, open markup, or smuggle them in as CSS escapes.
+    private const string CUSTOM_PROPERTY_VALUE_CONTROL_PATTERN = '/[{};<\\\\\x00-\x1F\x7F]/';
+
     public static function safeRawText(string $css): string
     {
         return preg_replace(self::CLOSING_STYLE_TAG_PATTERN, '<\/style', $css) ?? $css;
@@ -47,6 +50,12 @@ final readonly class InlineStyleContent
             throw new \InvalidArgumentException('CSS custom property values must be scalar or stringable.');
         }
 
-        return self::safeRawText((string) $value);
+        $value = (string) $value;
+
+        if (preg_match(self::CUSTOM_PROPERTY_VALUE_CONTROL_PATTERN, $value) === 1) {
+            throw new \InvalidArgumentException(sprintf('Invalid CSS custom property value "%s".', $value));
+        }
+
+        return $value;
     }
 }
