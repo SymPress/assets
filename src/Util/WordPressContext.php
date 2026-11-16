@@ -203,6 +203,11 @@ final class WordPressContext
             $this->force(self::LOGIN);
         }, PHP_INT_MIN);
         add_action('rest_api_init', function (): void {
+            // The block editor preloads REST data inside an admin request; that does not make it a REST request.
+            if (!self::isRestRequest()) {
+                return;
+            }
+
             $this->force(self::REST);
         }, PHP_INT_MIN);
         add_action('activate_header', function (): void {
