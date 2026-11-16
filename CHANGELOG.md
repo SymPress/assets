@@ -8,7 +8,7 @@ where applicable.
 
 ## 1.2.6 - 2026-11-16
 
-- Reject `withCssVars()` values containing `{`, `}`, `;`, `<`, `\` or control characters such as newlines. Such values could close the custom property declaration and inject arbitrary CSS into the inline style. Passing them now throws an `InvalidArgumentException`.
+- Reject `withCssVars()` values containing `{`, `}`, `<`, `\`, control characters such as newlines, unbalanced quotes, or `;` outside a closed quoted string. Such values could close the custom property declaration and inject arbitrary CSS into the inline style. Passing them now throws an `InvalidArgumentException`. Quoted data URIs such as `url("data:image/svg+xml;base64,...")` keep working.
 
 ## 1.2.5 - 2026-11-16
 
