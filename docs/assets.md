@@ -92,6 +92,10 @@ $style
     ->withCssVars(':root', ['brand' => '#111']);
 ```
 
+`withCssVars()` throws an `InvalidArgumentException` for selectors containing
+`<`, `{` or `}`, for invalid custom property names, and for values containing
+`{`, `}`, `;`, `<`, `\` or control characters such as newlines.
+
 ## Dependency Extraction
 
 Scripts and script modules automatically read matching `.asset.json` files when
