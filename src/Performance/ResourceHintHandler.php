@@ -8,16 +8,30 @@ use SymPress\Assets\Asset;
 
 final class ResourceHintHandler
 {
-    /** @var list<ResourceHint> */
-    private array $hints = [];
+    /** @var list<Asset&ResourceHintAwareAsset> */
+    private array $assets = [];
+
+    /** @var list<ResourceHint>|null */
+    private ?array $hints = null;
 
     private bool $registered = false;
 
     /** @param array<class-string, array<string, Asset>> $assets */
     public function run(array $assets): bool
     {
-        $this->hints = $this->collectHints($assets);
-        if ($this->hints === []) {
+        $this->assets = [];
+        $this->hints = null;
+        foreach ($assets as $typedAssets) {
+            foreach ($typedAssets as $asset) {
+                if (!$asset instanceof ResourceHintAwareAsset || $asset->resourceHints() === []) {
+                    continue;
+                }
+
+                $this->assets[] = $asset;
+            }
+        }
+
+        if ($this->assets === []) {
             return false;
         }
 
@@ -75,23 +89,18 @@ final class ResourceHintHandler
         return $resources;
     }
 
-    /**
-     * @param array<class-string, array<string, Asset>> $assets
-     * @return list<ResourceHint>
-     */
-    private function collectHints(array $assets): array
+    /** @return list<ResourceHint> */
+    private function collectHints(): array
     {
         $hints = [];
 
-        foreach ($assets as $typedAssets) {
-            foreach ($typedAssets as $asset) {
-                if (!$asset instanceof ResourceHintAwareAsset) {
-                    continue;
-                }
+        foreach ($this->assets as $asset) {
+            if (!$asset->enqueue()) {
+                continue;
+            }
 
-                foreach ($asset->resourceHints() as $hint) {
-                    $hints[$hint->relation() . "\0" . $hint->href() . "\0" . serialize($hint->attributes())] = $hint;
-                }
+            foreach ($asset->resourceHints() as $hint) {
+                $hints[$hint->relation() . "\0" . $hint->href() . "\0" . serialize($hint->attributes())] = $hint;
             }
         }
 
@@ -101,6 +110,9 @@ final class ResourceHintHandler
     /** @return list<ResourceHint> */
     private function hintsForRelation(string $relation): array
     {
+        // Collected when WordPress prints the hints: enqueue() conditions may rely on query tags.
+        $this->hints ??= $this->collectHints();
+
         return array_values(array_filter(
             $this->hints,
             static fn (ResourceHint $hint): bool => $relation === $hint->relation(),
