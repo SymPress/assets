@@ -83,6 +83,22 @@ class AssetSymlinkPublisherTest extends AbstractTestCase
         static::assertFalse(file_exists($this->publishRoot . '/package-assets'));
     }
 
+    public function testRejectsDirectoriesWithSymlinks(): void
+    {
+        $secretRoot = $this->root . '/secret';
+        mkdir($secretRoot);
+        file_put_contents($secretRoot . '/wp-config.php', '<?php // secret');
+        symlink($secretRoot . '/wp-config.php', $this->allowedRoot . '/assets/config.json');
+
+        static::assertNull($this->publisher()->publish($this->allowedRoot . '/assets', 'package-assets'));
+
+        unlink($this->allowedRoot . '/assets/config.json');
+        symlink($secretRoot, $this->allowedRoot . '/assets/more');
+
+        static::assertNull($this->publisher()->publish($this->allowedRoot . '/assets', 'package-assets'));
+        static::assertFalse(file_exists($this->publishRoot . '/package-assets'));
+    }
+
     private function publisher(): AssetSymlinkPublisher
     {
         return new AssetSymlinkPublisher(
