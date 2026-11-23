@@ -9,6 +9,7 @@ use Brain\Monkey\Functions;
 use SymPress\Assets\Asset;
 use SymPress\Assets\AssetManager;
 use SymPress\Assets\Handler\AssetHandler;
+use SymPress\Assets\Performance\ResourceHintHandler;
 use SymPress\Assets\Script;
 use SymPress\Assets\Style;
 use SymPress\Assets\Util\AssetHookResolver;
@@ -403,6 +404,27 @@ class AssetManagerTest extends AbstractTestCase
         $assetManager->register($script);
 
         static::assertSame($script, $assetManager->assets()[Script::class]['late'] ?? null);
+    }
+
+    public function testResourceHintsOnlyIncludeAssetsOfTheCurrentContext(): void
+    {
+        $hintHandler = new ResourceHintHandler();
+        $assetManager = new AssetManager(
+            new AssetHookResolver(WpContext::new()->force(WpContext::FRONTOFFICE)),
+            resourceHintHandler: $hintHandler,
+        );
+        $assetManager->register(
+            (new Script('front', 'https://example.test/front.js'))->withPreloadResource('script'),
+            (new Script('admin', 'https://example.test/admin.js', Asset::BACKEND))->withPreloadResource('script'),
+        );
+        Functions\when('add_filter')->justReturn(true);
+
+        $assetManager->assets();
+
+        static::assertSame(
+            [['href' => 'https://example.test/front.js', 'as' => 'script']],
+            $hintHandler->preloadResources([]),
+        );
     }
 
     private function factoryAssetManager(?string $context = null): AssetManager

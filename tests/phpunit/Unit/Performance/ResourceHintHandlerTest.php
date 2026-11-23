@@ -46,6 +46,28 @@ final class ResourceHintHandlerTest extends AbstractTestCase
     }
 
     #[Test]
+    public function itSkipsHintsOfAssetsThatAreNotEnqueuedWhenPrinting(): void
+    {
+        $checked = false;
+        $handler = new ResourceHintHandler();
+        $asset = (new Script('app', 'https://example.test/app.js'))
+            ->withPreloadResource('script')
+            ->canEnqueue(static function () use (&$checked): bool {
+                $checked = true;
+
+                return false;
+            });
+
+        Functions\expect('add_filter')->twice()->andReturn(true);
+
+        self::assertTrue($handler->run([Script::class => ['app' => $asset]]));
+        // The enqueue condition may use query tags, so it is only checked when WordPress prints the hints.
+        self::assertFalse($checked);
+        self::assertSame([], $handler->preloadResources([]));
+        self::assertTrue($checked);
+    }
+
+    #[Test]
     public function itDoesNotRegisterFiltersWithoutResourceHints(): void
     {
         Functions\expect('add_filter')->never();

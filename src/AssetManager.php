@@ -172,7 +172,15 @@ final class AssetManager
 
     public function registerResourceHints(): bool
     {
-        return $this->resourceHintHandler->run($this->assets->all());
+        // Only assets of the current request context, so admin-only preloads stay out of the frontend.
+        $assets = [];
+        foreach ($this->hookResolver->resolve() as $hook) {
+            foreach ($this->assetsForHook($hook) as $asset) {
+                $assets[$asset::class][$asset->handle()] = $asset;
+            }
+        }
+
+        return $this->resourceHintHandler->run($assets);
     }
 
     /**
