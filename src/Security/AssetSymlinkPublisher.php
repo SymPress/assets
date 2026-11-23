@@ -179,7 +179,16 @@ final readonly class AssetSymlinkPublisher
         }
 
         foreach ($files as $file) {
-            if (!$file instanceof \SplFileInfo || !$file->isFile()) {
+            if (!$file instanceof \SplFileInfo) {
+                continue;
+            }
+
+            // A link's name says nothing about its target, and linked directories are not traversed.
+            if ($file->isLink()) {
+                return false;
+            }
+
+            if (!$file->isFile()) {
                 continue;
             }
 
