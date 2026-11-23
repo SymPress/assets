@@ -172,6 +172,34 @@ class StyleTest extends AbstractTestCase
         yield 'newline' => ["red\n"];
         yield 'carriage return' => ["red\r"];
         yield 'form feed' => ["red\f"];
+        yield 'unbalanced parenthesis' => ['('];
+        yield 'unbalanced bracket' => ['['];
+        yield 'unclosed function' => ['calc(1px'];
+        yield 'unclosed url' => ['url(foo'];
+        yield 'open comment' => ['red /*'];
+        yield 'mismatched blocks' => ['([)]'];
+        yield 'stray closing parenthesis' => [')'];
+        yield 'escaped closing quote' => ['"a\\"'];
+        yield 'escaped newline in string' => ["\"a\\\nb\""];
+    }
+
+    public function testCssVarsKeepValidEscapesAndLongValues(): void
+    {
+        $long = str_repeat('a', 100000);
+        $testee = (new Style('handle', 'foo.css'))->withCssVars(':root', [
+            'quote' => '"\\201C"',
+            'icon' => "'\\f101'",
+            'escaped-quote' => '"a\\"b"',
+            'nested' => 'calc((1px + 2px) * var(--x, [a]))',
+            'comment-in-string' => '"/*"',
+            'long' => $long,
+        ]);
+
+        static::assertSame(
+            ':root{--quote:"\\201C";--icon:\'\\f101\';--escaped-quote:"a\\"b";'
+            . '--nested:calc((1px + 2px) * var(--x, [a]));--comment-in-string:"/*";--long:' . $long . ';}',
+            $testee->cssVarsAsString(),
+        );
     }
 
     public function testCssVarsKeepRegularValues(): void

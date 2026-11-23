@@ -12,11 +12,17 @@ final readonly class InlineStyleContent
 
     private const string SELECTOR_CONTROL_PATTERN = '/[<{}]/';
 
-    // Never { } < \ or control characters (rule break-out, markup, CSS escapes); ";" only inside
-    // closed quoted strings such as data URIs, where it cannot end the declaration.
-    private const string CUSTOM_PROPERTY_VALUE_PATTERN = '/^(?:[^"\';{}<\\\\\x00-\x1F\x7F]'
-        . '|"[^"{}<\\\\\x00-\x1F\x7F]*"'
-        . '|\'[^\'{}<\\\\\x00-\x1F\x7F]*\')*$/D';
+    // A value must not end the declaration, swallow the rest of the block or add markup: never { } < or
+    // control characters; ";" and escapes only inside closed quoted strings; no "/*"; ( ) and [ ] balanced.
+    // Possessive quantifiers keep long values off the PCRE backtracking stack.
+    private const string CUSTOM_PROPERTY_VALUE_PATTERN = '~^(?<value>(?:'
+        . '[^"\';{}<()\[\]/\\\\\x00-\x1F\x7F]++'
+        . '|/(?!\*)'
+        . '|"(?:[^"{}<\\\\\x00-\x1F\x7F]++|\\\\[^{}<\x00-\x1F\x7F])*+"'
+        . '|\'(?:[^\'{}<\\\\\x00-\x1F\x7F]++|\\\\[^{}<\x00-\x1F\x7F])*+\''
+        . '|\((?&value)\)'
+        . '|\[(?&value)\]'
+        . ')*+)$~D';
 
     public static function safeRawText(string $css): string
     {
