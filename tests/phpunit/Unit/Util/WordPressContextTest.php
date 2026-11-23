@@ -45,9 +45,21 @@ class WordPressContextTest extends AbstractTestCase
         static::assertTrue($context->isBackoffice());
     }
 
-    public function testAnActualRestRequestStillSwitchesToRest(): void
+    public function testARestRouteQueryInAnAdminRequestKeepsTheAdminContext(): void
     {
         $context = WordPressContext::determine();
+        $_GET['rest_route'] = '/wp/v2/posts';
+
+        ($this->callbacks['rest_api_init'])();
+
+        static::assertTrue($context->isBackoffice());
+    }
+
+    public function testAnActualRestRequestStillSwitchesToRest(): void
+    {
+        Functions\when('is_admin')->justReturn(false);
+        $context = WordPressContext::determine();
+        static::assertTrue($context->isFrontoffice());
         $_GET['rest_route'] = '/wp/v2/posts';
 
         ($this->callbacks['rest_api_init'])();
