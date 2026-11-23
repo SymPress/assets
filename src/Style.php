@@ -109,8 +109,16 @@ class Style extends BaseAsset implements Asset, DataAwareAsset, FilterAwareAsset
         }
 
         foreach ($vars as $key => $value) {
-            $this->cssVars[$element][InlineStyleContent::customPropertyName((string) $key)] =
-                InlineStyleContent::customPropertyValue($value);
+            $name = InlineStyleContent::customPropertyName((string) $key);
+
+            try {
+                $this->cssVars[$element][$name] = InlineStyleContent::customPropertyValue($value);
+            } catch (\InvalidArgumentException $exception) {
+                // Values often come from options or user meta: skip a bad one instead of breaking every page.
+                if (function_exists('_doing_it_wrong')) {
+                    _doing_it_wrong(__METHOD__, esc_html($exception->getMessage()), '1.3.0');
+                }
+            }
         }
 
         return $this;

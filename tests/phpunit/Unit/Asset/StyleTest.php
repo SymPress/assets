@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SymPress\Assets\Tests\Unit\Asset;
 
+use Brain\Monkey\Functions;
 use SymPress\Assets\Asset;
 use SymPress\Assets\Handler\StyleHandler;
 use SymPress\Assets\OutputFilter\AsyncStyleOutputFilter;
@@ -145,11 +146,13 @@ class StyleTest extends AbstractTestCase
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('provideUnsafeCssVarValues')]
-    public function testCssVarsRejectValuesThatLeaveTheDeclaration(string $value): void
+    public function testCssVarsSkipValuesThatLeaveTheDeclaration(string $value): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        Functions\expect('_doing_it_wrong')->once();
 
-        (new Style('handle', 'foo.css'))->withCssVars(':root', ['brand' => $value]);
+        $testee = (new Style('handle', 'foo.css'))->withCssVars(':root', ['brand' => $value, 'ok' => '#fff']);
+
+        static::assertSame(':root{--ok:#fff;}', $testee->cssVarsAsString());
     }
 
     /** @return \Generator<string, array{string}> */
