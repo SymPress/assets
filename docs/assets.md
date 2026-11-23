@@ -93,10 +93,11 @@ $style
 ```
 
 `withCssVars()` throws an `InvalidArgumentException` for selectors containing
-`<`, `{` or `}`, for invalid custom property names, and for values containing
-`{`, `}`, `<`, `\`, control characters such as newlines, unbalanced quotes, or
-`;` outside a closed single- or double-quoted string. Quoted data URIs such as
-`url("data:image/svg+xml;base64,...")` remain valid.
+`<`, `{` or `}` and for invalid custom property names. Values containing `{`,
+`}`, `<`, `\`, control characters such as newlines, unbalanced quotes, or `;`
+outside a closed single- or double-quoted string are skipped with a
+`_doing_it_wrong()` notice, so a bad stored option cannot break the page.
+Quoted data URIs such as `url("data:image/svg+xml;base64,...")` remain valid.
 
 ## Dependency Extraction
 
