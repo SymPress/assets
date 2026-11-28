@@ -31,7 +31,7 @@
         "php-stubs/wordpress-stubs": ">=7.0@stable",
         "phpstan/phpstan-mockery": "^2.0",
         "symfony/var-dumper": "^8.1",
-        "sympress/kernel": "^1.1.1",
+        "sympress/kernel": "^1.1.19",
         "sympress/qa": "^0.1.2"
     },
     "autoload": {
